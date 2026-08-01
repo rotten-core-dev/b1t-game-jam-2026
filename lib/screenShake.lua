@@ -14,6 +14,14 @@ function screenShake.trigger(strength, duration)
     screenShake.shakeTimeLeft = math.max(screenShake.shakeTimeLeft, duration)
 end
 
+function screenShake.stop()
+    screenShake.shakeTimeLeft = 0
+    screenShake.shakeMagnitude = 0
+    screenShake.shakeDuration = 0
+    screenShake.shakeOffsetX = 0
+    screenShake.shakeOffsetY = 0
+end
+
 function screenShake.updateScreenShake(dt)
     if screenShake.shakeTimeLeft > 0 then
         screenShake.shakeTimeLeft = math.max(0, screenShake.shakeTimeLeft - dt)
