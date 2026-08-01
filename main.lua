@@ -9,7 +9,7 @@ state = require "lib/state" --require the library
 
 themes.current = themes.getByName("B1T JAM") --set the current theme to "B1T JAM"
 
-GAMEWIDTH, GAMEHEIGHT = 270, 480
+GAMEWIDTH, GAMEHEIGHT = 480, 270
 
 function love.resize(w, h)
   push:resize(w, h)
