@@ -16,10 +16,11 @@ function love.resize(w, h)
 end
 
 function love.load()
+    love.graphics.setDefaultFilter("nearest", "nearest") --disable blurry scaling
+
+    love.mouse.setVisible(false) --hide the mouse cursor
 
     love.window.setTitle("COCK-A-DOODLE-DOO")
-
-    love.graphics.setDefaultFilter("nearest", "nearest") --disable blurry scaling
 
     --love.graphics.setBackgroundColor(themes.current.secondary)
 
@@ -29,7 +30,8 @@ function love.load()
     push:setupScreen(GAMEWIDTH, GAMEHEIGHT, windowWidth, windowHeight, {
     fullscreen = false,
     resizable = true,
-    highdpi = true,
+    upscale = 'normal', 
+    --highdpi = true,
     canvas = false
     })
     push:setBorderColor(0, 0, 0) --default value
