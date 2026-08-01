@@ -1,17 +1,13 @@
 io.stdout:setvbuf('no')
 
 push = require "lib/push" --require the library
+themes = require "lib/themes" --require the library
+--screenShake = require "lib/screenShake" --require the library
+state = require "lib/state" --require the library
 
-local states = {
-  "intro",
-  "title",
-  "gameplay"
-}
-local state = 1
+--pixelfont = require "assets/fonts/pixel.ttf" --require the library
 
-for i = 1, #states do
-  states[i] = require("states." .. states[i])
-end
+themes.current = themes.getByName("B1T JAM") --set the current theme to "B1T JAM"
 
 GAMEWIDTH, GAMEHEIGHT = 270, 480
 
@@ -23,9 +19,9 @@ function love.load()
 
     love.window.setTitle("COCK-A-DOODLE-DOO")
 
-    love.graphics.setDefaultFilter("linear", "linear") --default filter
+    love.graphics.setDefaultFilter("nearest", "nearest") --disable blurry scaling
 
-
+    --love.graphics.setBackgroundColor(themes.current.secondary)
 
     local windowWidth, windowHeight = love.window.getDesktopDimensions()
     windowWidth, windowHeight = windowWidth*.5, windowHeight*.5
@@ -38,7 +34,15 @@ function love.load()
     })
     push:setBorderColor(0, 0, 0) --default value
 
-    love.graphics.setNewFont(12)
+    -- initialize our nice-looking retro text fonts
+    SmallFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 8)
+    LargeFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 16)
+    ScoreFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 32)
+    MenuTitleFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 32)
+    TitleFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 26)
+    love.graphics.setFont(SmallFont)
+
+    state.switch(require "states/intro") --switch to the intro state
 end
 
 
@@ -48,20 +52,30 @@ function love.keypressed(key, scancode, isrepeat)
     --be sure to reset push settings
     --push:resetSettings()
     
-    
+
+
     if key == "f" then --activate fullscreen mode
         push:switchFullscreen() --optional width and height parameters for window mode
     elseif key == "escape" then 
         love.event.quit() 
-    else 
-        if state < 2 then
-            state = 2
-        
-        elseif state < 3 then
-            state = state + 1
-        end
+    -- else 
+    --     local currentState = state.currentState
+    --     if currentState.nextState then
+    --         state.switch(currentState.nextState) --switch to the next state
+    --     end
     end
-    states[state]()
 end
 
-states[state]()
+function love.update(dt)
+    local current = state.current()
+    if current and current.update then
+        current:update(dt)
+    end
+end
+
+function love.draw()
+    local current = state.current()
+    if current and current.draw then
+        current:draw()
+    end
+end
