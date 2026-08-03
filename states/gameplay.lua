@@ -19,25 +19,87 @@ local chargeBarWidth, chargeBarHeight = GAMEWIDTH * 0.05, GAMEHEIGHT * 0.8
 local paddleWidth, paddleHeight = chargeBarWidth + 10, 10
 local paddleX = chargeBarX - (paddleWidth - chargeBarWidth) * 0.5
 local paddleY = chargeBarY + chargeBarHeight - paddleHeight
+local paddleCentreY = paddleY + paddleHeight * 0.5
 local paddleSpeed = 3 * chargeBarHeight-- paddle moves at half the height of the charge bar per second
+local isCharging = false -- flag to indicate if the paddle is charging
 
-local arrowSprite = love.graphics.newImage("assets/arrow.png")
+-- target dimensions and position
+local targetStartSize = 10
+local targetMaxSize = chargeBarHeight / 10
+local targetGrowthRate = targetMaxSize / 5 -- target grows to max size in 5 seconds
+local currentTargetSize = targetStartSize -- used to keep track of target size as it grows
+local targetCentreY = 0
+local targetTopY = targetCentreY - currentTargetSize / 2
+local targetBottomY = targetCentreY + currentTargetSize
 
-local arrow = {
-  xpos = 0,
-  ypos = 0,
-
-
-}
 
 local function resetPaddle()
   paddleY = chargeBarY + chargeBarHeight - paddleHeight
+  paddleCentreY = paddleY + paddleHeight * 0.5
 end
 
+local function generateTarget()
+  -- reset the target size to the starting size
+  currentTargetSize = targetStartSize
+
+  -- generate a random position for target
+  local targetMinY = chargeBarY + targetMaxSize 
+  local targetMaxY = chargeBarY + chargeBarHeight - targetMaxSize
+  targetCentreY = love.math.random(targetMinY, targetMaxY)
+end
+
+local function growTarget(dt)
+  if currentTargetSize < targetMaxSize then
+    currentTargetSize = currentTargetSize + targetGrowthRate * dt
+    if currentTargetSize > targetMaxSize then
+      currentTargetSize = targetMaxSize
+    end
+  end
+end
+
+local function handlePaddle(dt)
+  if love.mouse.isDown(1) or love.keyboard.isDown("space") then
+    isCharging = true
+    sounds.chicken:play()
+    screenShake.trigger(3*chargeBarHeight/paddleY, 0.1)
+    if paddleY > chargeBarY then
+      paddleY = paddleY - paddleSpeed * dt
+      paddleCentreY = paddleY + paddleHeight * 0.5
+    end
+  else 
+    if isCharging then
+      isCharging = false
+      -- Check if the paddle is within the target area when released
+      -- subtract or add paddleHeight for better feel
+      if (paddleCentreY) >= (targetTopY-paddleHeight) and (paddleCentreY) <= (targetBottomY+paddleHeight) then
+        sounds.rooster:stop()
+        sounds.rooster:play()
+        print("Hit", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
+        screenShake.trigger(20, 0.5) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
+        generateTarget() -- Generate a new target after a successful hit
+      else
+        print("Miss", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
+      end
+    end
+    sounds.chicken:stop()
+    screenShake.stop()
+    resetPaddle()
+  end
+end
 
 function gameplay:enter()
   screenShake.stop()
+  generateTarget()
+  resetPaddle()
   --screenShake.trigger(5, 1.0) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
+end
+
+
+function gameplay:update(dt)
+  screenShake.update(dt)
+  growTarget(dt)
+  handlePaddle(dt)
+
 end
 
 function gameplay:draw()
@@ -66,8 +128,13 @@ function gameplay:draw()
   -- draw a rectangle towards top of screen for our charging and timing bar
   love.graphics.rectangle("line", chargeBarX, chargeBarY, chargeBarWidth, chargeBarHeight)
 
+  -- draw the target as a rectangle that grows in size over time
+  targetTopY = targetCentreY - currentTargetSize / 2
+  targetBottomY = targetCentreY + currentTargetSize / 2
+  love.graphics.rectangle("fill", chargeBarX, targetTopY, chargeBarWidth, currentTargetSize) 
+
   -- draw the paddle
-  love.graphics.rectangle("fill", paddleX, paddleY, paddleWidth, paddleHeight)
+  love.graphics.rectangle("fill", paddleX, paddleY, paddleWidth, paddleHeight,5)
   
  -- self:drawArrow()
 
@@ -75,40 +142,6 @@ function gameplay:draw()
   love.graphics.translate(-screenShake.shakeOffsetX, -screenShake.shakeOffsetY)
 
   push:apply("end")
-end
-
-function gameplay:update(dt)
-  screenShake.update(dt) --update game logic here
-  if love.mouse.isDown(1) or love.keyboard.isDown("space") then
-    sounds.chicken:play()
-    screenShake.trigger(2*chargeBarHeight/paddleY, 0.1)
-    if paddleY > chargeBarY then
-      paddleY = paddleY - paddleSpeed * dt
-    end
-  else 
-    sounds.chicken:stop()
-    screenShake.stop()
-    resetPaddle()
-  end
-end
-
-
-function gameplay:drawArrow()
-  -- arrow starts at beginning of timing bar and moves to the end of the bar while the player holds down the mouse or spacebar
-  local mouseDown = love.mouse.isDown(1) or love.keyboard.isDown("space")
-  if mouseDown then
-    local mouseX, mouseY = love.mouse.getPosition()
-    mouseX, mouseY = push:toGame(mouseX, mouseY)
-    if mouseX and mouseY then
-      local barStartX = GAMEWIDTH * 0.1
-      local barEndX = GAMEWIDTH * 0.9
-      local barWidth = barEndX - barStartX
-      local barHeight = GAMEHEIGHT * 0.05
-      local barY = GAMEHEIGHT * 0.15 + (barHeight * 0.5) + (arrowSprite:getHeight())
-      local arrowX = barStartX + (barWidth * 0.5) - (arrowSprite:getWidth() * 0.5)
-      love.graphics.draw(arrowSprite, arrowX, barY)
-    end
-  end
 end
 
 return gameplay
