@@ -20,7 +20,7 @@ function love.load()
 
     love.mouse.setVisible(false) --hide the mouse cursor
 
-    love.window.setTitle("COCK-A-DOODLE-DOO")
+    love.window.setTitle("COCK-A-DOODLE-DO!")
 
     --love.graphics.setBackgroundColor(themes.current.secondary)
 
