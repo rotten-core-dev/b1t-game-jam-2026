@@ -11,6 +11,8 @@ local gameplay = {
   
 }
 
+local debug = true
+
 -- charge bar dimensions and position
 local chargeBarX, chargeBarY = GAMEWIDTH * 0.9, GAMEHEIGHT * 0.15
 local chargeBarWidth, chargeBarHeight = GAMEWIDTH * 0.05, GAMEHEIGHT * 0.8
@@ -74,11 +76,16 @@ local function handlePaddle(dt)
       if (paddleCentreY) >= (targetTopY-paddleHeight) and (paddleCentreY) <= (targetBottomY+paddleHeight) then
         sounds.rooster:stop()
         sounds.rooster:play()
+        if debug then
+          print("Hit", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
+        end
         print("Hit", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
         screenShake.trigger(5*chargeBarHeight/paddleY, 0.5) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
         generateTarget() -- Generate a new target after a successful hit
       else
-        print("Miss", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
+        if debug then
+          print("Miss", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
+        end
       end
     end
     sounds.chicken:stop()

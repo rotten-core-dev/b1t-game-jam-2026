@@ -44,6 +44,9 @@ function love.load()
     TitleFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 26)
     love.graphics.setFont(SmallFont)
 
+    -- cover art image
+    CoverArt = love.graphics.newImage("assets/img/rooster-crack-o-dawn-light-on-dark.png") --require the library
+
     state.switch(require "states/intro") --switch to the intro state
 end
 
