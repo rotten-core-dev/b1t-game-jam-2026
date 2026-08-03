@@ -42,7 +42,7 @@ function title:update(dt)
   if love.timer.getTime() - self.enterTime >= self.shakeStartTime and not screenShake.isShaking() then
     screenShake.trigger(self.shakeMagnitude, self.shakeDuration) -- Trigger a screen shake with strength 5 and duration 1.0 seconds
   end
-  if love.timer.getTime() - self.enterTime >= self.screenTime or love.mouse.isDown(1) then
+  if love.timer.getTime() - self.enterTime >= self.screenTime or love.mouse.isDown(1) or love.keyboard.isDown("space") then
     screenShake.stop() -- Stop the screen shake
     state.switch(self.nextState) --switch to the next state
   end

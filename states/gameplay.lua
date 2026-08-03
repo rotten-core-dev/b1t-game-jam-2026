@@ -75,14 +75,13 @@ local function handlePaddle(dt)
         sounds.rooster:stop()
         sounds.rooster:play()
         print("Hit", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
-        screenShake.trigger(20, 0.5) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
+        screenShake.trigger(5*chargeBarHeight/paddleY, 0.5) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
         generateTarget() -- Generate a new target after a successful hit
       else
         print("Miss", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
       end
     end
     sounds.chicken:stop()
-    screenShake.stop()
     resetPaddle()
   end
 end
