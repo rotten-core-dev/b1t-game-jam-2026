@@ -12,6 +12,15 @@ themes.list = {
         secondary_name = "BROWN",
     },
     {
+        name       = "CRACK-O-DAWN",
+        unlocked   = true,
+        primary    = { 0.992, 0.843, 0.753, 1 },
+        secondary  = { 0.115, 0.173, 0.233, 1 },
+        background = { 0.05, 0.05, 0.05, 1 },
+        primary_name = "DAWN PINK",
+        secondary_name = "NIGHT BLUE",
+    },
+    {
         name       = "HACKER",
         unlocked   = true,
         primary    = { 0, 1, 0, 1 },

@@ -10,6 +10,16 @@ local gameplay = {
   
 }
 
+-- charge bar dimensions and position
+local chargeBarX, chargeBarY = GAMEWIDTH * 0.9, GAMEHEIGHT * 0.15
+local chargeBarWidth, chargeBarHeight = GAMEWIDTH * 0.05, GAMEHEIGHT * 0.8
+
+-- paddle dimensions and position
+local paddleWidth, paddleHeight = chargeBarWidth + 10, 10
+local paddleX = chargeBarX - (paddleWidth - chargeBarWidth) * 0.5
+local paddleY = chargeBarY + chargeBarHeight - paddleHeight
+local paddleSpeed = 3 * chargeBarHeight-- paddle moves at half the height of the charge bar per second
+
 local arrowSprite = love.graphics.newImage("assets/arrow.png")
 
 local arrow = {
@@ -19,7 +29,10 @@ local arrow = {
 
 }
 
- 
+local function resetPaddle()
+  paddleY = chargeBarY + chargeBarHeight - paddleHeight
+end
+
 
 function gameplay:enter()
   screenShake.stop()
@@ -50,7 +63,10 @@ function gameplay:draw()
   love.graphics.printf("COCK-A-DOODLE-DOO", 0, GAMEHEIGHT * 0.05, GAMEWIDTH, "center")
 
   -- draw a rectangle towards top of screen for our charging and timing bar
-  love.graphics.rectangle("line", GAMEWIDTH * 0.1, GAMEHEIGHT * 0.15, GAMEWIDTH * 0.8, GAMEHEIGHT * 0.05)
+  love.graphics.rectangle("line", chargeBarX, chargeBarY, chargeBarWidth, chargeBarHeight)
+
+  -- draw the paddle
+  love.graphics.rectangle("fill", paddleX, paddleY, paddleWidth, paddleHeight)
   
  -- self:drawArrow()
 
@@ -62,10 +78,17 @@ end
 
 function gameplay:update(dt)
   screenShake.update(dt) --update game logic here
-  if love.mouse.isDown(1) then
-    screenShake.trigger(20, 0.1) 
+  if love.mouse.isDown(1) or love.keyboard.isDown("space") then
+    screenShake.trigger(2*chargeBarHeight/paddleY, 0.1)
+    if paddleY > chargeBarY then
+      paddleY = paddleY - paddleSpeed * dt
+    end
+  else 
+    screenShake.stop()
+    resetPaddle()
   end
 end
+
 
 function gameplay:drawArrow()
   -- arrow starts at beginning of timing bar and moves to the end of the bar while the player holds down the mouse or spacebar

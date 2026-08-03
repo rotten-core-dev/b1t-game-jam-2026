@@ -7,7 +7,7 @@ state = require "lib/state" --require the library
 
 --pixelfont = require "assets/fonts/pixel.ttf" --require the library
 
-themes.current = themes.getByName("B1T JAM") --set the current theme to "B1T JAM"
+themes.current = themes.getByName("CRACK-O-DAWN") --set the current theme
 
 GAMEWIDTH, GAMEHEIGHT = 480, 270
 
