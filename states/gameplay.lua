@@ -1,4 +1,5 @@
 local screenShake = require "lib/screenShake" --require the library
+local sounds = require "src/sounds" --require the library
 
 local gameplay = {
   enterTime = 0.0,
@@ -79,11 +80,13 @@ end
 function gameplay:update(dt)
   screenShake.update(dt) --update game logic here
   if love.mouse.isDown(1) or love.keyboard.isDown("space") then
+    sounds.chicken:play()
     screenShake.trigger(2*chargeBarHeight/paddleY, 0.1)
     if paddleY > chargeBarY then
       paddleY = paddleY - paddleSpeed * dt
     end
   else 
+    sounds.chicken:stop()
     screenShake.stop()
     resetPaddle()
   end
