@@ -19,6 +19,9 @@ sounds.lalaby = love.audio.newSource("assets/sounds/lalaby.ogg", "static")
 sounds.chicken:setVolume(0.7)
 sounds.gasp:setVolume(0.5)
 sounds.snore:setVolume(0.6)
+sounds.dudeGasp:setVolume(0.6)
+sounds.dudeGasp2:setVolume(0.6)
+
 
 
 

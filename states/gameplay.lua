@@ -16,8 +16,8 @@ snorePause = 1.25,
 setNewTarget = nil,
 playOnce = true,
 trigTime = currentTime,
-trigTimePause = 0.05,
-trigTimeOnce = true,
+trigTimePause = 0.1,
+trigTimeOnce = false,
 }
 
 local debug = true
@@ -149,7 +149,7 @@ else
       gameplay.trigTime = currentTime
       gameplay.trigTimeOnce = true
       gameplay.setNewTarget = true
-      screenShake.trigger(4*chargeBarHeight/paddleY, gameplay.hitPause*1) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
+      screenShake.trigger(2*chargeBarHeight/paddleY, gameplay.hitPause*1) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
 
 
       if debug then
@@ -285,12 +285,12 @@ drawArt(imageGuy.pillow,xm,ym + 13,0,0)
 if gameplay.hit then
   drawArt(imageGuy.hands,xm,ym + 20 - (eyeMod*0.7),eyeShake,eyeSpeed)
 end
-  drawArt(imageGuy.head,xm+6,ym-5 - (eyeMod*0.7),eyeShake,eyeSpeed)
-  drawArt(eyeArt,xm,ym+20 + (eyeMod*0.6),eyeShake,eyeSpeed)
+  drawArt(imageGuy.head,xm+6,ym-5 +10 - (eyeMod*0.5),eyeShake,eyeSpeed)
+  drawArt(eyeArt,xm,ym+20 + (eyeMod*0.2),eyeShake,eyeSpeed)
   drawArt(imageGuy.bed,xm,ym+45,0,0)
 
   drawArt(imageGuy.beard,xm,ym + 30 - (eyeMod*0.2),eyeShake,eyeSpeed)
-  drawArt(imageGuy.stash,xm,ym + 13 + (eyeMod*0.3),eyeShake,eyeSpeed)
+  drawArt(imageGuy.stash,xm,ym + 13 + (eyeMod*0.4),eyeShake,eyeSpeed)
 
 
 
