@@ -15,6 +15,9 @@ hitPauseWait = 2.5,
 snorePause = 1.25,
 setNewTarget = nil,
 playOnce = true,
+trigTime = currentTime,
+trigTimePause = 0.05,
+trigTimeOnce = true,
 }
 
 local debug = true
@@ -140,15 +143,21 @@ else
       sounds.rooster:stop()
       sounds.rooster:play()
       sounds.snore:stop()
-      sounds.dudeGasp:play()
+      sounds.lalaby:stop()
+      gameplay.hitTime = currentTime
+
+      gameplay.trigTime = currentTime
+      gameplay.trigTimeOnce = true
+      gameplay.setNewTarget = true
+      screenShake.trigger(4*chargeBarHeight/paddleY, gameplay.hitPause*1) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
+
+
       if debug then
         -- print("Hit", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
       end
       -- print("Hit", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
-      screenShake.trigger(4*chargeBarHeight/paddleY, gameplay.hitPause*0.5) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
-      gameplay.hit = true
-      gameplay.hitTime = currentTime
-      gameplay.setNewTarget = true
+      -- gameplay.hit = true
+      -- gameplay.hitTime = currentTime
       -- generateTarget() -- Generate a new target after a successful hit
     else
       sounds.chicken:play()
@@ -172,6 +181,8 @@ screenShake.stop()
 generateTarget()
 resetPaddle()
 sounds.snore:play()
+sounds.lalaby:play()
+
 -- screenShake.trigger(5, 1.0) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
 end
 
@@ -180,7 +191,16 @@ function gameplay:update(dt)
 screenShake.update(dt)
 growTarget(dt)
 handlePaddle(dt)
+  if currentTime - gameplay.trigTimePause > gameplay.trigTime 
+  and gameplay.trigTimeOnce then
+    gameplay.hit = true
+    
+    sounds.dudeGasp:play()
+    sounds.dudeGasp2:play()
+    gameplay.trigTimeOnce = false
+  end
   if currentTime - gameplay.hitPause > gameplay.hitTime then
+    sounds.lalaby:play()
     if gameplay.setNewTarget 
     and  currentTime - (gameplay.hitPause*gameplay.hitPauseWait) > gameplay.hitTime 
     then
@@ -192,6 +212,7 @@ handlePaddle(dt)
     and  currentTime - (gameplay.hitPause*(gameplay.snorePause)) > gameplay.hitTime
     then
       sounds.snore:play()
+
     end
     gameplay.hit = false
   end
