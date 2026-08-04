@@ -10,8 +10,11 @@ shakeDuration = 1.0, -- Duration of the screen shakeTimeLeft
 shakeMagnitude = 20, -- Magnitude of the screen shake
 hit = false,
 hitTime = currentTime,
-hitPause = 1,
+hitPause = 0.7,
+hitPauseWait = 2.5,
+snorePause = 1.25,
 setNewTarget = nil,
+playOnce = true,
 }
 
 local debug = true
@@ -114,36 +117,52 @@ end
 local function handlePaddle(dt)
 if love.mouse.isDown(1) or love.keyboard.isDown("space") then
   isCharging = true
-  sounds.chicken:play()
+  if gameplay.playOnce then
+    -- sounds.chicken:play()
+    sounds.gasp:play()
+    gameplay.playOnce = false
+  end
   -- screenShake.trigger(3*chargeBarHeight/paddleY, 0.1)
   if paddleY > chargeBarY then
     paddleY = paddleY - paddleSpeed * dt
     paddleCentreY = paddleY + paddleHeight * 0.5
   end
 else 
+  -- sounds.chicken:stop()
+  sounds.gasp:stop()
+  gameplay.playOnce = true
   if isCharging then
     isCharging = false
+    
     -- Check if the paddle is within the target area when released
     -- subtract or add paddleHeight for better feel
     if (paddleCentreY) >= (targetTopY-paddleHeight) and (paddleCentreY) <= (targetBottomY+paddleHeight) then
       sounds.rooster:stop()
       sounds.rooster:play()
+      sounds.snore:stop()
+      sounds.dudeGasp:play()
       if debug then
-        print("Hit", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
+        -- print("Hit", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
       end
-      print("Hit", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
-      screenShake.trigger(2*chargeBarHeight/paddleY, gameplay.hitPause*0.5) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
+      -- print("Hit", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
+      screenShake.trigger(4*chargeBarHeight/paddleY, gameplay.hitPause*0.5) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
       gameplay.hit = true
       gameplay.hitTime = currentTime
       gameplay.setNewTarget = true
       -- generateTarget() -- Generate a new target after a successful hit
     else
+      sounds.chicken:play()
+      screenShake.trigger(7, 0.1)
+
+
       if debug then
         print("Miss", "Target Size:", currentTargetSize, "Paddle Y:", paddleY, "Target Top Y:", targetTopY, "Target Bottom Y:", targetBottomY)
       end
     end
   end
-  sounds.chicken:stop()
+
+
+      -- sounds.chicken:stop()
   resetPaddle()
 end
 end
@@ -152,6 +171,7 @@ function gameplay:enter()
 screenShake.stop()
 generateTarget()
 resetPaddle()
+sounds.snore:play()
 -- screenShake.trigger(5, 1.0) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
 end
 
@@ -162,10 +182,16 @@ growTarget(dt)
 handlePaddle(dt)
   if currentTime - gameplay.hitPause > gameplay.hitTime then
     if gameplay.setNewTarget 
-    and  currentTime - (gameplay.hitPause*1.2) > gameplay.hitTime 
+    and  currentTime - (gameplay.hitPause*gameplay.hitPauseWait) > gameplay.hitTime 
     then
       generateTarget() -- Generate a new target after a successful hit
+      sounds.click:play()
       gameplay.setNewTarget = nil
+      sounds.dudeGasp:stop()
+    elseif gameplay.setNewTarget 
+    and  currentTime - (gameplay.hitPause*(gameplay.snorePause)) > gameplay.hitTime
+    then
+      sounds.snore:play()
     end
     gameplay.hit = false
   end
@@ -174,8 +200,17 @@ end
 function gameplay:draw()
 push:apply("start")
 
+  love.graphics.translate(screenShake.shakeOffsetX, screenShake.shakeOffsetY)
+  local padH = (chargeBarHeight/paddleY)
+  if padH < 1 then padH = 0 end
+  padH = padH * 0.2
+  local dx  = love.math.random(-padH, padH)
+  local dy = love.math.random(-padH, padH)
+
+
 -- screen shake is handled by the screenShake library, which modifies the drawing position based on the shake offset
-love.graphics.translate(screenShake.shakeOffsetX, screenShake.shakeOffsetY)
+love.graphics.translate(dx, dy)
+
 
 -- this is the background color
 love.graphics.setColor(themes.current.secondary)
@@ -213,7 +248,7 @@ local xm = GAMEWIDTH/2
 local ym = GAMEHEIGHT/2 + 70
 local eyeMod = 0
 local eyeShake = 2
-local eyeSpeed = 2
+local eyeSpeed = 4
 local eyeArt = imageGuy.eyesClosed
 
 if gameplay.hit then
