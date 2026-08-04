@@ -9,13 +9,14 @@ state = require "lib/state" --require the library
 
 themes.current = themes.getByName("CRACK-O-DAWN") --set the current theme
 
-GAMEWIDTH, GAMEHEIGHT = 480, 270
+GAMEWIDTH, GAMEHEIGHT = 400, 300
 
 function love.resize(w, h)
   push:resize(w, h)
 end
 
 function love.load()
+    currentTime = love.timer.getTime()
     love.graphics.setDefaultFilter("nearest", "nearest") --disable blurry scaling
 
     love.mouse.setVisible(false) --hide the mouse cursor
@@ -47,6 +48,17 @@ function love.load()
     -- cover art image
     CoverArt = love.graphics.newImage("assets/img/rooster-crack-o-dawn-light-on-dark.png") --require the library
 
+    -- GUY
+    imageGuy = {
+        beard = love.graphics.newImage("assets/img/beard.png"),
+        bed = love.graphics.newImage("assets/img/bed.png"),
+        eyesClosed = love.graphics.newImage("assets/img/eyesClosed.png"),
+        eyesOpen = love.graphics.newImage("assets/img/eyesOpen.png"),
+        hands = love.graphics.newImage("assets/img/hands.png"),
+        head = love.graphics.newImage("assets/img/head.png"),
+        pillow = love.graphics.newImage("assets/img/pillow.png"),
+        stash = love.graphics.newImage("assets/img/stash.png")
+    }
     state.switch(require "states/intro") --switch to the intro state
 end
 
@@ -72,6 +84,7 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 function love.update(dt)
+    currentTime = love.timer.getTime()
     local current = state.current()
     if current and current.update then
         current:update(dt)
