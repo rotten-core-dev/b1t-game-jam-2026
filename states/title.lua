@@ -99,7 +99,10 @@ end
 
 
 function title:update(dt)
-  screenShake.update(dt) 
+  screenShake.update(dt) --update game logic here
+  if not waitingToStart and love.timer.getTime() - self.enterTime >= self.shakeStartTime and not screenShake.isShaking() then
+    screenShake.trigger(self.shakeMagnitude, self.shakeDuration) -- Trigger a screen shake with strength 5 and duration 1.0 seconds
+  end
   if love.timer.getTime() - self.enterTime >= self.screenTime or love.mouse.isDown(1) or love.keyboard.isDown("space") then
     screenShake.stop() -- Stop the screen shake
     waitingToStart = true -- Set the flag to indicate we are waiting to start the game
