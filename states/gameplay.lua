@@ -18,6 +18,7 @@ playOnce = true,
 trigTime = currentTime,
 trigTimePause = 0.1,
 trigTimeOnce = false,
+successfulHits = 0,
 }
 
 local debug = true
@@ -139,7 +140,10 @@ else
     
     -- Check if the paddle is within the target area when released
     -- subtract or add paddleHeight for better feel
-    if (paddleCentreY) >= (targetTopY-paddleHeight) and (paddleCentreY) <= (targetBottomY+paddleHeight) then
+    if (paddleCentreY) >= (targetTopY-paddleHeight) and (paddleCentreY) <= (targetBottomY+paddleHeight)
+    and currentTime - gameplay.hitPause > gameplay.hitTime
+    then
+      gameplay.successfulHits = gameplay.successfulHits + 1
       sounds.rooster:stop()
       sounds.rooster:play()
       sounds.snore:stop()
@@ -271,12 +275,14 @@ local eyeMod = 0
 local eyeShake = 2
 local eyeSpeed = 4
 local eyeArt = imageGuy.eyesClosed
+local longeyes = 0
 
 if gameplay.hit then
   eyeMod = -20
   eyeShake = 2
   eyeSpeed = 20
   eyeArt = imageGuy.eyesOpen
+  longeyes = math.min((gameplay.successfulHits), 10)
 end
 
 
@@ -286,7 +292,7 @@ if gameplay.hit then
   drawArt(imageGuy.hands,xm,ym + 20 - (eyeMod*0.7),eyeShake,eyeSpeed)
 end
   drawArt(imageGuy.head,xm+6,ym-5 +10 - (eyeMod*0.5),eyeShake,eyeSpeed)
-  drawArt(eyeArt,xm,ym+20 + (eyeMod*0.2),eyeShake,eyeSpeed)
+  drawArt(eyeArt,xm,ym+20 + (eyeMod*0.2) - longeyes,eyeShake,eyeSpeed)
   drawArt(imageGuy.bed,xm,ym+45,0,0)
 
   drawArt(imageGuy.beard,xm,ym + 30 - (eyeMod*0.2),eyeShake,eyeSpeed)
