@@ -141,7 +141,7 @@ else
     -- Check if the paddle is within the target area when released
     -- subtract or add paddleHeight for better feel
     if (paddleCentreY) >= (targetTopY-paddleHeight) and (paddleCentreY) <= (targetBottomY+paddleHeight)
-    and currentTime - gameplay.hitPause > gameplay.hitTime
+    and currentTime - gameplay.hitPauseWait > gameplay.hitTime
     then
       gameplay.successfulHits = gameplay.successfulHits + 1
       sounds.rooster:stop()
