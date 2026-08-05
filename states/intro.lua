@@ -24,7 +24,7 @@ function intro:draw()
   local mouseX, mouseY = love.mouse.getPosition()
   mouseX, mouseY = push:toGame(mouseX, mouseY)
   --nil is returned if mouse is outside the game screen
-  love.graphics.setFont(LargeFont)
+  love.graphics.setFont(MenuTitleFont)
   love.graphics.setColor(themes.current.primary)
   if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
 

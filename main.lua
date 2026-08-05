@@ -38,11 +38,11 @@ function love.load()
     push:setBorderColor(0, 0, 0) --default value
 
     -- initialize our nice-looking retro text fonts
-    SmallFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 8)
+    SmallFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 8)
     MediumFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 12)
     LargeFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 16)
     ScoreFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 26)
-    MenuTitleFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 32)
+    MenuTitleFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 32)
     TitleFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 26)
     love.graphics.setFont(ScoreFont)
 
