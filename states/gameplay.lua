@@ -70,7 +70,7 @@ end
 
 local function calculateAwakePercentage()
   if gameplay.countdownTimer > 0 then
- --   gameover.awakePercentage = gameplay.stoppageTime / (gameplay.countdownTimer + gameplay.stoppageTime)
+    awakePercentage = gameplay.stoppageTime / (gameplay.countdownTimer + gameplay.stoppageTime)
   end
 end
 
@@ -178,7 +178,10 @@ local function handlePaddle(dt)
       sounds.gasp:play()
       gameplay.playOnce = false
     end
-    -- screenShake.trigger(3*chargeBarHeight/paddleY, 0.1)
+    local paddleBarRatio = chargeBarHeight/paddleY
+    local randomMagnitude = love.math.random(3, 10) 
+    screenShake.trigger(randomMagnitude*paddleBarRatio, 0.1)
+    love.audio.setVolume(paddleBarRatio)
     if paddleY > chargeBarY then
       paddleY = paddleY - paddleSpeed * dt
       paddleCentreY = paddleY + paddleHeight * 0.5
@@ -246,42 +249,43 @@ end
 
 function gameplay:update(dt)
   screenShake.update(dt)
-  if gameplay.countdownTimer >= 60 or love.keyboard.isDown("g")  then
+  if gameplay.countdownTimer >= 60 then
     calculateAwakePercentage()
     isGameOver = true
     sounds.snore:stop()
     sounds.lalaby:stop()
     --state.switch(self.nextState)
   end
-
-  growTarget(dt)
-  handlePaddle(dt)
-  handleTimers(dt)
-  if currentTime - gameplay.trigTimePause > gameplay.trigTime 
-  and gameplay.trigTimeOnce then
-    gameplay.hit = true
-    gameplay.isCountdownPaused = true
-    sounds.dudeGasp:play()
-    sounds.dudeGasp2:play()
-    gameplay.trigTimeOnce = false
-  end
-  if currentTime - gameplay.hitPause > gameplay.hitTime then
-    sounds.lalaby:play()
-    if gameplay.setNewTarget 
-    and  currentTime - (gameplay.hitPause*gameplay.hitPauseWait) > gameplay.hitTime 
-    then
-      generateTarget() -- Generate a new target after a successful hit
-      gameplay.isCountdownPaused = false
-      sounds.click:play()
-      gameplay.setNewTarget = false
-      sounds.dudeGasp:stop()
-    elseif gameplay.setNewTarget 
-    and  currentTime - (gameplay.hitPause*(gameplay.snorePause)) > gameplay.hitTime
-    then
-      sounds.snore:play()
-
+  if not isGameOver then
+    growTarget(dt)
+    handlePaddle(dt)
+    handleTimers(dt)
+    if currentTime - gameplay.trigTimePause > gameplay.trigTime 
+    and gameplay.trigTimeOnce then
+      gameplay.hit = true
+      gameplay.isCountdownPaused = true
+      sounds.dudeGasp:play()
+      sounds.dudeGasp2:play()
+      gameplay.trigTimeOnce = false
     end
-    gameplay.hit = false
+    if currentTime - gameplay.hitPause > gameplay.hitTime then
+      sounds.lalaby:play()
+      if gameplay.setNewTarget 
+      and  currentTime - (gameplay.hitPause*gameplay.hitPauseWait) > gameplay.hitTime 
+      then
+        generateTarget() -- Generate a new target after a successful hit
+        gameplay.isCountdownPaused = false
+        sounds.click:play()
+        gameplay.setNewTarget = false
+        sounds.dudeGasp:stop()
+      elseif gameplay.setNewTarget 
+      and  currentTime - (gameplay.hitPause*(gameplay.snorePause)) > gameplay.hitTime
+      then
+        sounds.snore:play()
+
+      end
+      gameplay.hit = false
+    end
   end
 end
 
@@ -327,7 +331,15 @@ function gameplay:draw()
     -- instructions  
   love.graphics.setFont(SmallFont)
   love.graphics.printf("Hold [SPACE] or Mouse", 0, GAMEHEIGHT * 0.1, GAMEWIDTH, "right")
+  if isGameOver then
+    love.graphics.setFont(LargeFont)
+    love.graphics.printf("GAME OVER", 0, GAMEHEIGHT * 0.2, GAMEWIDTH, "center")
+    love.graphics.setFont(LargeFont)
+    love.graphics.printf(string.format("The boss was %.0f%% awake ", awakePercentage * 100), 0, GAMEHEIGHT * 0.3, GAMEWIDTH, "center")
+    love.graphics.printf("but it was not enough", 0, GAMEHEIGHT * 0.4, GAMEWIDTH, "center")
+    love.graphics.printf("you have been replaced by tech", 0, GAMEHEIGHT * 0.5, GAMEWIDTH, "center")
 
+  end
   -- draw a rectangle towards top of screen for our charging and timing bar
   love.graphics.rectangle("line", chargeBarX, chargeBarY, chargeBarWidth, chargeBarHeight)
 
