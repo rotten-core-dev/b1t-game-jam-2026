@@ -326,7 +326,7 @@ function gameplay:draw()
 
     -- instructions  
   love.graphics.setFont(SmallFont)
-  love.graphics.printf("Hold [SPACE] or Mouse", 0, GAMEHEIGHT * 0.9, GAMEWIDTH, "center")
+  love.graphics.printf("Hold [SPACE] or Mouse", 0, GAMEHEIGHT * 0.1, GAMEWIDTH, "right")
 
   -- draw a rectangle towards top of screen for our charging and timing bar
   love.graphics.rectangle("line", chargeBarX, chargeBarY, chargeBarWidth, chargeBarHeight)
