@@ -7,7 +7,7 @@ state = require "lib/state" --require the library
 
 --pixelfont = require "assets/fonts/pixel.ttf" --require the library
 
-themes.current = themes.getByName("CRACK-O-DAWN") --set the current theme
+themes.current = themes.getByName("WHITE ON BLACK") --set the current theme
 
 GAMEWIDTH, GAMEHEIGHT = 400, 300
 
@@ -23,7 +23,7 @@ function love.load()
 
     love.window.setTitle("COCK-A-DOODLE-DO!")
 
-    --love.graphics.setBackgroundColor(themes.current.secondary)
+    love.graphics.setBackgroundColor(themes.current.background)
 
     local windowWidth, windowHeight = love.window.getDesktopDimensions()
     windowWidth, windowHeight = windowWidth*.5, windowHeight*.5
@@ -38,15 +38,16 @@ function love.load()
     push:setBorderColor(0, 0, 0) --default value
 
     -- initialize our nice-looking retro text fonts
-    SmallFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 8)
-    LargeFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 16)
-    ScoreFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 32)
-    MenuTitleFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 32)
-    TitleFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 26)
-    love.graphics.setFont(SmallFont)
+    SmallFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 8)
+    MediumFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 12)
+    LargeFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 16)
+    ScoreFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 26)
+    MenuTitleFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 32)
+    TitleFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 26)
+    love.graphics.setFont(ScoreFont)
 
     -- cover art image
-    CoverArt = love.graphics.newImage("assets/img/rooster-crack-o-dawn-light-on-dark.png") --require the library
+    CoverArt = love.graphics.newImage("assets/img/rooster.png") --require the library
 
     -- GUY
     imageGuy = {

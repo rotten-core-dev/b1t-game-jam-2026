@@ -45,16 +45,13 @@ end
 function title:draw()
   push:apply("start")
 
+  -- translate (screen shake) should wrap everything to be drawn (negative offsets at bottom)
   love.graphics.translate(screenShake.shakeOffsetX, screenShake.shakeOffsetY)
-  love.graphics.setColor(themes.current.secondary)
+  
+  love.graphics.setColor(themes.current.primary)
   love.graphics.rectangle("fill", 0, 0, GAMEWIDTH, GAMEHEIGHT)
     
-  local mouseX, mouseY = love.mouse.getPosition()
-  mouseX, mouseY = push:toGame(mouseX, mouseY)
-  --nil is returned if mouse is outside the game screen
-  love.graphics.setFont(TitleFont)
-  love.graphics.setColor(themes.current.primary)
-  if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
+
 
   -- preserve art color
   love.graphics.setColor(1,1,1,1)
@@ -68,30 +65,41 @@ function title:draw()
   local artY = GAMEHEIGHT * 0.2
   love.graphics.draw(CoverArt, artX, artY, artRotation, artScale, artScale)
 
+  --draw mouse cursor
+
+  local mouseX, mouseY = love.mouse.getPosition()
+  mouseX, mouseY = push:toGame(mouseX, mouseY)
+  --nil is returned if mouse is outside the game screen
+  love.graphics.setFont(TitleFont)
+  love.graphics.setColor(themes.current.secondary)
+  if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
+
   --love.graphics.printf("COCK-A-DOODLE-DOO", 0, GAMEHEIGHT/3, GAMEWIDTH, "center")
-  love.graphics.translate(-screenShake.shakeOffsetX, -screenShake.shakeOffsetY)
+
 
   if waitingToStart then
 
-    -- draw button
-    local textWidth = TitleFont:getWidth(button.text)
-    local textHeight = TitleFont:getHeight(button.text)
-  
+    -- draw button  
     if isButtonHovered() and not love.mouse.isDown(1) then
-      love.graphics.setColor(themes.current.primary)
+      love.graphics.setColor(themes.current.secondary)
       love.graphics.rectangle("fill", button.x, button.y, button.width, button.height, button.height/4)
       --text
-      love.graphics.setColor(themes.current.secondary)
+      love.graphics.setColor(themes.current.primary)
       love.graphics.printf(button.text, button.x, button.y , button.width, "center")
 
     else
-      love.graphics.setColor(themes.current.primary)
+      love.graphics.setColor(themes.current.secondary)
       love.graphics.rectangle("line", button.x, button.y, button.width, button.height, button.height/4)
       --text
       love.graphics.printf(button.text, button.x, button.y , button.width, "center")
     end
+
+
     
   end
+
+  -- shake should be last (reminder for Ben)
+  love.graphics.translate(-screenShake.shakeOffsetX, -screenShake.shakeOffsetY)
 
   push:apply("end")
 end
