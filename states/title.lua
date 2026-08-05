@@ -50,12 +50,6 @@ function title:draw()
   love.graphics.setColor(themes.current.primary)
   love.graphics.rectangle("fill", 0, 0, GAMEWIDTH, GAMEHEIGHT)
     
-  local mouseX, mouseY = love.mouse.getPosition()
-  mouseX, mouseY = push:toGame(mouseX, mouseY)
-  --nil is returned if mouse is outside the game screen
-  love.graphics.setFont(TitleFont)
-  love.graphics.setColor(themes.current.primary)
-  if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
 
   -- preserve art color
   love.graphics.setColor(1,1,1,1)
@@ -69,8 +63,14 @@ function title:draw()
   local artY = GAMEHEIGHT * 0.2
   love.graphics.draw(CoverArt, artX, artY, artRotation, artScale, artScale)
 
-  --love.graphics.printf("COCK-A-DOODLE-DOO", 0, GAMEHEIGHT/3, GAMEWIDTH, "center")
-  love.graphics.translate(-screenShake.shakeOffsetX, -screenShake.shakeOffsetY)
+  local mouseX, mouseY = love.mouse.getPosition()
+  mouseX, mouseY = push:toGame(mouseX, mouseY)
+  --nil is returned if mouse is outside the game screen
+  love.graphics.setFont(TitleFont)
+  love.graphics.setColor(themes.current.secondary)
+  if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
+
+
 
   if waitingToStart then
 
@@ -94,6 +94,7 @@ function title:draw()
     
   end
 
+  love.graphics.translate(-screenShake.shakeOffsetX, -screenShake.shakeOffsetY)
   push:apply("end")
 end
 
