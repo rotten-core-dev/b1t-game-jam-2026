@@ -121,7 +121,7 @@ local function drawArt(art,x,y,wob,wobSpeed)
   love.graphics.pop()
 end
 
-local function clockRadio()
+local function drawClock()
 
   local  x = GAMEWIDTH * 0.1
   local  y = GAMEHEIGHT * 0.7
@@ -133,10 +133,21 @@ local function clockRadio()
   end
 
   love.graphics.setFont(ScoreFont)
-  love.graphics.setColor(themes.current.primary)
-  love.graphics.rectangle("line", x, y, width, height)
-  love.graphics.printf(text, x, y , width, "center")
+
+  if gameplay.isCountdownPaused then
+    love.graphics.setColor(themes.current.primary)
+    love.graphics.rectangle("fill", x, y, width, height)
+    love.graphics.setColor(themes.current.secondary)
+    love.graphics.printf(text, x, y , width, "center")
+  else
+    love.graphics.setColor(themes.current.primary)
+    love.graphics.rectangle("line", x, y, width, height)
+    love.graphics.printf(text, x, y , width, "center")
+  end
+  
+
   if debug then
+    love.graphics.setColor(themes.current.primary)
     love.graphics.setFont(MediumFont)
     love.graphics.printf(string.format("Stoppage Time: %.2f", gameplay.stoppageTime), x, y - height, width, "center")
   end
@@ -348,7 +359,7 @@ function gameplay:draw()
   love.graphics.rectangle("fill", paddleX, paddleY, paddleWidth, paddleHeight,5)
 
   -- self:drawArrow()
-  clockRadio()
+  drawClock()
   -- guy
   local xm = GAMEWIDTH/2
   local ym = GAMEHEIGHT/2 + 70
