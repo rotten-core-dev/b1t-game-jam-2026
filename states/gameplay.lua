@@ -182,6 +182,10 @@ local function growTarget(dt)
 end
 
 local function handlePaddle(dt)
+  -- found a bug where if the player is moving the paddle when time goes over 60 seconds, 
+  -- the paddle will continue to move and the player can still hit the target. This is a fix for that bug.
+  if gameplay.countdownTimer >= 60 or isGameOver then return end
+  
   if love.mouse.isDown(1) or love.keyboard.isDown("space") then
     isCharging = true
     if gameplay.playOnce then
@@ -260,7 +264,7 @@ end
 
 function gameplay:update(dt)
   screenShake.update(dt)
-  if gameplay.countdownTimer >= 60 then
+  if gameplay.countdownTimer >= 60 or (debug and love.keyboard.isDown("g"))  then
     calculateAwakePercentage()
     isGameOver = true
     sounds.snore:stop()
