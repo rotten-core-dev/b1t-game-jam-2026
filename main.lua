@@ -39,12 +39,12 @@ function love.load()
 
     -- initialize our nice-looking retro text fonts
     SmallFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 8)
-    MediumFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 12)
-    LargeFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 16)
-    ScoreFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 26)
+    MediumFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 12)
+    LargeFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 16)
+    ClockFont = love.graphics.newFont("assets/fonts/DS-DIGI.ttf" , 26)
     MenuTitleFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 32)
-    TitleFont = love.graphics.newFont("assets/fonts/DS-DIGIB.ttf" , 26)
-    love.graphics.setFont(ScoreFont)
+    TitleFont = love.graphics.newFont("assets/fonts/pixel.ttf" , 26)
+    love.graphics.setFont(ClockFont)
 
     -- cover art image
     CoverArt = love.graphics.newImage("assets/img/rooster.png") --require the library

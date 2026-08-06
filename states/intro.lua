@@ -1,4 +1,5 @@
-screenShake = require "lib/screenShake" --require the library
+local screenShake = require "lib/screenShake" --require the library
+--local titleState = require("states/title")
 
 local intro = {
   enterTime = 0.0,
@@ -24,7 +25,7 @@ function intro:draw()
   local mouseX, mouseY = love.mouse.getPosition()
   mouseX, mouseY = push:toGame(mouseX, mouseY)
   --nil is returned if mouse is outside the game screen
-  love.graphics.setFont(MenuTitleFont)
+  love.graphics.setFont(TitleFont)
   love.graphics.setColor(themes.current.primary)
   if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
 

@@ -1,6 +1,7 @@
 local screenShake = require "lib/screenShake" --require the library
 local sounds = require "src/sounds" --require the library
 --local gameover = require("states/gameover")
+--local titleState = require("states/title")
 
 local gameplay = {
   enterTime = 0.0,
@@ -29,6 +30,24 @@ local debug = true
 local isGameOver = false
 local awakePercentage = 0.00
 
+local button = {
+  
+    width = GAMEWIDTH * 0.2,
+    height = GAMEHEIGHT * 0.1,
+    x = GAMEWIDTH * 0.5, 
+    y = GAMEHEIGHT * 0.7,
+    text = "PLAY"
+}
+
+local function isButtonHovered()
+  local mouseX, mouseY = love.mouse.getPosition()
+  mouseX, mouseY = push:toGame(mouseX, mouseY)
+  if not mouseX or not mouseY then
+    return false
+  end
+  return mouseX >= button.x and mouseX <= button.x + button.width and
+         mouseY >= button.y and mouseY <= button.y + button.height   
+end
 --- IMG ---
 
 
@@ -70,7 +89,7 @@ end
 
 local function calculateAwakePercentage()
   if gameplay.countdownTimer > 0 then
- --   gameover.awakePercentage = gameplay.stoppageTime / (gameplay.countdownTimer + gameplay.stoppageTime)
+    awakePercentage = gameplay.stoppageTime / (gameplay.countdownTimer + gameplay.stoppageTime)
   end
 end
 
@@ -121,7 +140,7 @@ local function drawArt(art,x,y,wob,wobSpeed)
   love.graphics.pop()
 end
 
-local function clockRadio()
+local function drawClockRadio()
 
   local  x = GAMEWIDTH * 0.1
   local  y = GAMEHEIGHT * 0.7
@@ -132,25 +151,68 @@ local function clockRadio()
     text = "6:00:00"
   end
 
-  love.graphics.setFont(ScoreFont)
-  love.graphics.setColor(themes.current.primary)
-  love.graphics.rectangle("line", x, y, width, height)
-  love.graphics.printf(text, x, y , width, "center")
+  -- invert colors if countdown is paused
+  love.graphics.setFont(ClockFont)
+  if gameplay.isCountdownPaused then
+    love.graphics.setColor(themes.current.primary)
+    love.graphics.rectangle("fill", x, y, width, height)
+    love.graphics.setColor(themes.current.secondary)
+    love.graphics.printf(text, x, y , width, "center")
+  else 
+    love.graphics.setColor(themes.current.primary)
+    love.graphics.rectangle("line", x, y, width, height)
+    love.graphics.printf(text, x, y , width, "center")
+    
+  end
   if debug then
-    love.graphics.setFont(MediumFont)
+    love.graphics.setColor(themes.current.primary)
+    love.graphics.setFont(SmallFont)
     love.graphics.printf(string.format("Stoppage Time: %.2f", gameplay.stoppageTime), x, y - height, width, "center")
   end
 
 end
 
--- local function drawGameOver()
+local function drawGameOver()
 
---   love.graphics.setFont(LargeFont)
---   love.graphics.setColor(themes.current.primary)
---   love.graphics.printf("GAME OVER", 0, GAMEHEIGHT * 0.4, GAMEWIDTH, "center")
---   love.graphics.setFont(ScoreFont)
---   love.graphics.printf(string.format("The boss was %.0f%% awake, but it was not enough and you have been replaced by tech", awakePercentage * 100), 0, GAMEHEIGHT * 0.5, GAMEWIDTH, "center")
--- end
+  love.graphics.setColor(themes.current.primary)
+  love.graphics.setFont(TitleFont)
+  love.graphics.printf("GAME OVER", 0, GAMEHEIGHT * 0.2, GAMEWIDTH, "center")
+  love.graphics.setFont(LargeFont)
+  love.graphics.printf(string.format("The boss was %.0f%% awake", awakePercentage * 100), 0, GAMEHEIGHT * 0.35, GAMEWIDTH, "center")
+  love.graphics.printf(string.format("but it was not enough", awakePercentage * 100), 0, GAMEHEIGHT * 0.45, GAMEWIDTH, "center")
+  love.graphics.printf(string.format("you have been replaced by tech", awakePercentage * 100), 0, GAMEHEIGHT * 0.5, GAMEWIDTH, "center")
+
+
+
+end
+
+local function drawMouseCursor()
+  local mouseX, mouseY = love.mouse.getPosition()
+  mouseX, mouseY = push:toGame(mouseX, mouseY)
+  --nil is returned if mouse is outside the game screen
+  love.graphics.setColor(themes.current.primary)
+  if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
+end
+
+local function drawButton()
+
+  love.graphics.setFont(TitleFont)
+  local cornerRadius = button.height / 4
+  -- Button colors invert on hover and click
+  if isButtonHovered() and not love.mouse.isDown(1) then
+    love.graphics.setColor(themes.current.primary)
+    love.graphics.rectangle("fill", button.x, button.y, button.width, button.height, cornerRadius)
+    --text
+    love.graphics.setColor(themes.current.secondary)
+    love.graphics.printf(button.text, button.x, button.y, button.width, "center")
+
+  else
+    love.graphics.setColor(themes.current.primary)
+    love.graphics.rectangle("line", button.x, button.y, button.width, button.height, cornerRadius)
+    --text
+    love.graphics.printf(button.text, button.x, button.y, button.width, "center")
+  end
+end
   
 local function drawTarget()
   if gameplay.setNewTarget then return end
@@ -236,6 +298,16 @@ local function handlePaddle(dt)
   end
 end
 
+local function restartGame()
+  isGameOver = false
+  awakePercentage = 0.00
+  gameplay.successfulHits = 0
+  gameplay.countdownTimer = 0.0
+  gameplay.stoppageTime = 0.0
+  resetPaddle()
+  generateTarget()
+end
+
 function gameplay:enter()
   screenShake.stop()
   generateTarget()
@@ -255,37 +327,42 @@ function gameplay:update(dt)
     isGameOver = true
     sounds.snore:stop()
     sounds.lalaby:stop()
-    --state.switch(self.nextState)
   end
 
-  growTarget(dt)
-  handlePaddle(dt)
-  handleTimers(dt)
-  if currentTime - gameplay.trigTimePause > gameplay.trigTime 
-  and gameplay.trigTimeOnce then
-    gameplay.hit = true
-    gameplay.isCountdownPaused = true
-    sounds.dudeGasp:play()
-    sounds.dudeGasp2:play()
-    gameplay.trigTimeOnce = false
-  end
-  if currentTime - gameplay.hitPause > gameplay.hitTime then
-    sounds.lalaby:play()
-    if gameplay.setNewTarget 
-    and  currentTime - (gameplay.hitPause*gameplay.hitPauseWait) > gameplay.hitTime 
-    then
-      generateTarget() -- Generate a new target after a successful hit
-      gameplay.isCountdownPaused = false
-      sounds.click:play()
-      gameplay.setNewTarget = false
-      sounds.dudeGasp:stop()
-    elseif gameplay.setNewTarget 
-    and  currentTime - (gameplay.hitPause*(gameplay.snorePause)) > gameplay.hitTime
-    then
-      sounds.snore:play()
-
+  if isGameOver then
+    if (isButtonHovered() and love.mouse.isDown(1)) or love.keyboard.isDown("return") then
+      restartGame()
     end
-    gameplay.hit = false
+  else
+    growTarget(dt)
+    handlePaddle(dt)
+    handleTimers(dt)
+    if currentTime - gameplay.trigTimePause > gameplay.trigTime 
+    and gameplay.trigTimeOnce then
+      gameplay.hit = true
+      gameplay.isCountdownPaused = true
+      sounds.dudeGasp:play()
+      sounds.dudeGasp2:play()
+      gameplay.trigTimeOnce = false
+    end
+    if currentTime - gameplay.hitPause > gameplay.hitTime then
+      sounds.lalaby:play()
+      if gameplay.setNewTarget 
+      and  currentTime - (gameplay.hitPause*gameplay.hitPauseWait) > gameplay.hitTime 
+      then
+        generateTarget() -- Generate a new target after a successful hit
+        gameplay.isCountdownPaused = false
+        sounds.click:play()
+        gameplay.setNewTarget = false
+        sounds.dudeGasp:stop()
+      elseif gameplay.setNewTarget 
+      and  currentTime - (gameplay.hitPause*(gameplay.snorePause)) > gameplay.hitTime
+      then
+        sounds.snore:play()
+
+      end
+      gameplay.hit = false
+    end
   end
 end
 
@@ -294,107 +371,108 @@ function gameplay:draw()
 
   love.graphics.translate(screenShake.shakeOffsetX, screenShake.shakeOffsetY)
 
-  -- if isGameOver then
-  --   drawGameOver()
-  --   return
-  -- end
+  if isGameOver then
+    drawGameOver()
+    drawMouseCursor()
+    drawButton()
+  else
   
-  local padH = (chargeBarHeight/paddleY)
-  if padH < 1 then padH = 0 end
-  padH = padH * 0.2
-  local dx  = love.math.random(-padH, padH)
-  local dy = love.math.random(-padH, padH)
+    local padH = (chargeBarHeight/paddleY)
+    if padH < 1 then padH = 0 end
+    padH = padH * 0.2
+    local dx  = love.math.random(-padH, padH)
+    local dy = love.math.random(-padH, padH)
 
 
-  -- screen shake is handled by the screenShake library, which modifies the drawing position based on the shake offset
-  love.graphics.translate(dx, dy)
+    -- screen shake is handled by the screenShake library, which modifies the drawing position based on the shake offset
+    love.graphics.translate(dx, dy)
 
 
-  -- this is the background color
-  love.graphics.setColor(themes.current.secondary)
-  love.graphics.rectangle("fill", 0, 0, GAMEWIDTH, GAMEHEIGHT)
+    -- this is the background color
+    love.graphics.setColor(themes.current.secondary)
+    love.graphics.rectangle("fill", 0, 0, GAMEWIDTH, GAMEHEIGHT)
 
-  -- set the foreground color to the primary color
-  love.graphics.setColor(themes.current.primary)
+    -- set the foreground color to the primary color
+    love.graphics.setColor(themes.current.primary)
 
-  --nil is returned if mouse is outside the game screen
-  -- local mouseX, mouseY = love.mouse.getPosition()
-  -- mouseX, mouseY = push:toGame(mouseX, mouseY)
+    --nil is returned if mouse is outside the game screen
+    -- local mouseX, mouseY = love.mouse.getPosition()
+    -- mouseX, mouseY = push:toGame(mouseX, mouseY)
 
-  -- draws the mouse cursor as a circle at the mouse position
-  --if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
+    -- draws the mouse cursor as a circle at the mouse position
+    --if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
 
-  -- title at top of screen  
-  love.graphics.setFont(LargeFont)
-  love.graphics.printf("COCK-A-DOODLE-DO!", 0, GAMEHEIGHT * 0.05, GAMEWIDTH, "center")
+    -- title at top of screen  
+    love.graphics.setFont(LargeFont)
+    love.graphics.printf("COCK-A-DOODLE-DO!", 0, GAMEHEIGHT * 0.05, GAMEWIDTH, "center")
 
-    -- instructions  
-  love.graphics.setFont(SmallFont)
-  love.graphics.printf("Hold [SPACE] or Mouse", 0, GAMEHEIGHT * 0.1, GAMEWIDTH, "right")
+      -- instructions  
+    love.graphics.setFont(SmallFont)
+    love.graphics.printf("Hold [SPACE] or Mouse", 0, GAMEHEIGHT * 0.1, GAMEWIDTH, "right")
 
-  -- draw a rectangle towards top of screen for our charging and timing bar
-  love.graphics.rectangle("line", chargeBarX, chargeBarY, chargeBarWidth, chargeBarHeight)
+    -- draw a rectangle towards top of screen for our charging and timing bar
+    love.graphics.rectangle("line", chargeBarX, chargeBarY, chargeBarWidth, chargeBarHeight)
 
-  drawTarget()
-  -- draw the paddle
-  love.graphics.rectangle("fill", paddleX, paddleY, paddleWidth, paddleHeight,5)
+    drawTarget()
+    -- draw the paddle
+    love.graphics.rectangle("fill", paddleX, paddleY, paddleWidth, paddleHeight,5)
 
-  -- self:drawArrow()
-  clockRadio()
-  -- guy
-  local xm = GAMEWIDTH/2
-  local ym = GAMEHEIGHT/2 + 70
-  local eyeMod = 0
-  local eyeShake = 2
-  local eyeSpeed = 4
-  local eyeArt = imageGuy.eyesClosed
-  local longeyes = 0
+    -- self:drawArrow()
+    drawClockRadio()
+    -- guy
+    local xm = GAMEWIDTH/2
+    local ym = GAMEHEIGHT/2 + 70
+    local eyeMod = 0
+    local eyeShake = 2
+    local eyeSpeed = 4
+    local eyeArt = imageGuy.eyesClosed
+    local longeyes = 0
 
-  if gameplay.hit then
-    eyeMod = -20
-    eyeShake = 2
-    eyeSpeed = 20
-    eyeArt = imageGuy.eyesOpen
-    longeyes = math.min((gameplay.successfulHits), 10)
-  end
-
-
-
-  drawArt(imageGuy.pillow,xm,ym + 13,0,0)
-  if gameplay.hit then
-    drawArt(imageGuy.hands,xm,ym + 20 - (eyeMod*0.7),eyeShake,eyeSpeed)
-  end
-  drawArt(imageGuy.head,xm+6,ym-5 +10 - (eyeMod*0.5),eyeShake,eyeSpeed)
-  drawArt(eyeArt,xm,ym+20 + (eyeMod*0.2) - longeyes,eyeShake,eyeSpeed)
-  drawArt(imageGuy.bed,xm,ym+45,0,0)
-
-  drawArt(imageGuy.beard,xm,ym + 30 - (eyeMod*0.2),eyeShake,eyeSpeed)
-  drawArt(imageGuy.stash,xm,ym + 13 + (eyeMod*0.4),eyeShake,eyeSpeed)
+    if gameplay.hit then
+      eyeMod = -20
+      eyeShake = 2
+      eyeSpeed = 20
+      eyeArt = imageGuy.eyesOpen
+      longeyes = math.min((gameplay.successfulHits), 10)
+    end
 
 
 
+    drawArt(imageGuy.pillow,xm,ym + 13,0,0)
+    if gameplay.hit then
+      drawArt(imageGuy.hands,xm,ym + 20 - (eyeMod*0.7),eyeShake,eyeSpeed)
+    end
+    drawArt(imageGuy.head,xm+6,ym-5 +10 - (eyeMod*0.5),eyeShake,eyeSpeed)
+    drawArt(eyeArt,xm,ym+20 + (eyeMod*0.2) - longeyes,eyeShake,eyeSpeed)
+    drawArt(imageGuy.bed,xm,ym+45,0,0)
+
+    drawArt(imageGuy.beard,xm,ym + 30 - (eyeMod*0.2),eyeShake,eyeSpeed)
+    drawArt(imageGuy.stash,xm,ym + 13 + (eyeMod*0.4),eyeShake,eyeSpeed)
 
 
-  -- if gameplay.hit then
-  --   drawArt(imageGuy.pillow,0,yMaster + 10)
-  --   drawArt(imageGuy.hands,0,yMaster + 10)
-  --   drawArt(imageGuy.head,0,yMaster + 10)
-  --   drawArt(imageGuy.eyesOpen,0,yMaster -20)---60)
-  --   drawArt(imageGuy.bed,0,yMaster)
-  --   drawArt(imageGuy.beard,0,yMaster)
-  --   drawArt(imageGuy.stash,0,yMaster -20)
-  -- else
-  --   drawArt(imageGuy.pillow,0,yMaster + 10)
-  --   drawArt(imageGuy.head,0,yMaster -15)
-  --   drawArt(imageGuy.eyesClosed,0,yMaster -10)
-  --   drawArt(imageGuy.bed,0,yMaster)
-  --   drawArt(imageGuy.beard,0,yMaster)
-  --   drawArt(imageGuy.stash,0,yMaster)
-  -- end
+
+
+
+    -- if gameplay.hit then
+    --   drawArt(imageGuy.pillow,0,yMaster + 10)
+    --   drawArt(imageGuy.hands,0,yMaster + 10)
+    --   drawArt(imageGuy.head,0,yMaster + 10)
+    --   drawArt(imageGuy.eyesOpen,0,yMaster -20)---60)
+    --   drawArt(imageGuy.bed,0,yMaster)
+    --   drawArt(imageGuy.beard,0,yMaster)
+    --   drawArt(imageGuy.stash,0,yMaster -20)
+    -- else
+    --   drawArt(imageGuy.pillow,0,yMaster + 10)
+    --   drawArt(imageGuy.head,0,yMaster -15)
+    --   drawArt(imageGuy.eyesClosed,0,yMaster -10)
+    --   drawArt(imageGuy.bed,0,yMaster)
+    --   drawArt(imageGuy.beard,0,yMaster)
+    --   drawArt(imageGuy.stash,0,yMaster)
+    -- end
 
   
 
-
+  end
   -- screenShake is applied to the drawing, so we need to reset the translation after drawing
   love.graphics.translate(-screenShake.shakeOffsetX, -screenShake.shakeOffsetY)
 

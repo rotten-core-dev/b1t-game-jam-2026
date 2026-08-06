@@ -15,7 +15,7 @@ local title = {
 }
 
 local button = {
-    x = GAMEWIDTH * 0.6,
+    x = GAMEWIDTH * 0.7,
     y = GAMEHEIGHT * 0.7,
     width = GAMEWIDTH * 0.2,
     height = GAMEHEIGHT * 0.1,
@@ -54,30 +54,41 @@ function title:draw()
   -- preserve art color
   love.graphics.setColor(1,1,1,1)
   local artRotation = 0
+  
+  -- DRAW COVER ART ON TITLE SCREEN
   -- image is larger than gamewidth so we need to scale it down to fit within the game width
   -- we will use the one scale for x and y to maintain the aspect ratio
-  local artScale = GAMEWIDTH * 0.8 / CoverArt:getWidth()
+  
+  -- changes scale and height of cover art
+  local artScaleFactor = 0.8
+  local artYModifier = 0.2
+  if waitingToStart then 
+    artScaleFactor = 0.5 
+    artYModifier = 0.1
+  end
+
+  local artScale = GAMEWIDTH * artScaleFactor / CoverArt:getWidth()
   local artWidth = CoverArt:getWidth() * artScale
-  local artHeight = CoverArt:getHeight() * artScale
   local artX = GAMEWIDTH * 0.5 - artWidth * 0.5
-  local artY = GAMEHEIGHT * 0.2
+  local artY = GAMEHEIGHT * artYModifier
+
   love.graphics.draw(CoverArt, artX, artY, artRotation, artScale, artScale)
 
+  -- DRAW MOUSE CURSOR AS
   local mouseX, mouseY = love.mouse.getPosition()
   mouseX, mouseY = push:toGame(mouseX, mouseY)
   --nil is returned if mouse is outside the game screen
-  love.graphics.setFont(TitleFont)
+
   love.graphics.setColor(themes.current.secondary)
   if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
 
 
-
+  -- DRAW BUTTON AND PLAYER INSTRUCTIONS AFTER TITLE HAS SHOWN
   if waitingToStart then
 
-    -- draw button
-    local textWidth = TitleFont:getWidth(button.text)
-    local textHeight = TitleFont:getHeight(button.text)
-  
+    love.graphics.setFont(TitleFont)
+    
+    -- Button colors invert on hover and click
     if isButtonHovered() and not love.mouse.isDown(1) then
       love.graphics.setColor(themes.current.secondary)
       love.graphics.rectangle("fill", button.x, button.y, button.width, button.height, button.height/4)
@@ -91,6 +102,18 @@ function title:draw()
       --text
       love.graphics.printf(button.text, button.x, button.y , button.width, "center")
     end
+
+    -- Set the scene and instructions for the player
+    love.graphics.setColor(themes.current.secondary)
+    love.graphics.setFont(LargeFont)
+    love.graphics.printf("Wake up the farmer before 6am or get the chop!", 0, GAMEHEIGHT * 0.4, GAMEWIDTH, "center")
+    love.graphics.setFont(MediumFont)
+    love.graphics.printf("For centuries your job", GAMEWIDTH * 0.05, GAMEHEIGHT * 0.6, GAMEWIDTH, "left")
+    love.graphics.printf("has been to wake up the humans", GAMEWIDTH * 0.05, GAMEHEIGHT * 0.65, GAMEWIDTH, "left")
+    love.graphics.printf("but your purpose is under threat", GAMEWIDTH * 0.05, GAMEHEIGHT * 0.7, GAMEWIDTH, "left")
+    love.graphics.printf("from a new tech", GAMEWIDTH * 0.05, GAMEHEIGHT * 0.75, GAMEWIDTH, "left")
+
+
     
   end
 
@@ -101,16 +124,13 @@ end
 
 
 function title:update(dt)
-  screenShake.update(dt) --update game logic here
-  if not waitingToStart and love.timer.getTime() - self.enterTime >= self.shakeStartTime and not screenShake.isShaking() then
-    screenShake.trigger(self.shakeMagnitude, self.shakeDuration) -- Trigger a screen shake with strength 5 and duration 1.0 seconds
-  end
+  screenShake.update(dt) 
   if love.timer.getTime() - self.enterTime >= self.screenTime or love.mouse.isDown(1) or love.keyboard.isDown("space") then
     screenShake.stop() -- Stop the screen shake
     waitingToStart = true -- Set the flag to indicate we are waiting to start the game
   end
   if waitingToStart then
-    if isButtonHovered() and love.mouse.isDown(1) then
+    if (isButtonHovered() and love.mouse.isDown(1)) or love.keyboard.isDown("return") then
       state.switch(self.nextState)
       waitingToStart = false -- Reset the flag after switching states
     end
