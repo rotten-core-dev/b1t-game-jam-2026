@@ -201,16 +201,16 @@ local function drawButton()
   -- Button colors invert on hover and click
   if isButtonHovered() and not love.mouse.isDown(1) then
     love.graphics.setColor(themes.current.primary)
-    love.graphics.rectangle("fill", button.x, button.y, button.width, button.height, cornerRadius)
+    love.graphics.rectangle("fill", button.x - button.width/2, button.y, button.width, button.height, cornerRadius)
     --text
     love.graphics.setColor(themes.current.secondary)
-    love.graphics.printf(button.text, button.x, button.y, button.width, "center")
+    love.graphics.printf(button.text, button.x - button.width/2, button.y, button.width, "center")
 
   else
     love.graphics.setColor(themes.current.primary)
-    love.graphics.rectangle("line", button.x, button.y, button.width, button.height, cornerRadius)
+    love.graphics.rectangle("line", button.x - button.width/2, button.y, button.width, button.height, cornerRadius)
     --text
-    love.graphics.printf(button.text, button.x, button.y, button.width, "center")
+    love.graphics.printf(button.text, button.x - button.width/2, button.y, button.width, "center")
   end
 end
   
