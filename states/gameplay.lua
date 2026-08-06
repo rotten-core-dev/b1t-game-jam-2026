@@ -180,7 +180,7 @@ local function drawGameOver()
   love.graphics.setFont(LargeFont)
   love.graphics.printf(string.format("The boss was %.0f%% awake", awakePercentage * 100), 0, GAMEHEIGHT * 0.35, GAMEWIDTH, "center")
   love.graphics.printf(string.format("but it was not enough", awakePercentage * 100), 0, GAMEHEIGHT * 0.45, GAMEWIDTH, "center")
-  love.graphics.printf(string.format("you have been replaced by tech", awakePercentage * 100), 0, GAMEHEIGHT * 0.5, GAMEWIDTH, "center")
+  love.graphics.printf(string.format("you have been replaced by tech", awakePercentage * 100), 0, GAMEHEIGHT * 0.55, GAMEWIDTH, "center")
 
 
 
