@@ -1,5 +1,6 @@
 local screenShake = require "lib/screenShake" --require the library
 local sounds = require "src/sounds" --require the library
+local camera = require "lib/camera" --require the library
 --local gameover = require("states/gameover")
 --local titleState = require("states/title")
 
@@ -81,9 +82,9 @@ local targetBottomY = targetCentreY + currentTargetSize
 local function handleTimers(dt)
   if isGameOver then return end
   if gameplay.isCountdownPaused then
-    gameplay.stoppageTime = gameplay.stoppageTime + dt
+    gameplay.stoppageTime = gameplay.stoppageTime + 500 * dt
   else
-    gameplay.countdownTimer = gameplay.countdownTimer + (5 * dt)
+    gameplay.countdownTimer = gameplay.countdownTimer + (500 * dt)
   end
 end
 
@@ -131,7 +132,7 @@ local function drawArt(art,x,y,wob,wobSpeed)
   
   local centerX = x - (artWidth/2) - xWobble
   local centerY = y - (artHeight/2) - yWobble
-    love.graphics.push()  
+  love.graphics.push()
   love.graphics.setColor(1,1,1,1)
   love.graphics.translate(artWidth/2, y)
   love.graphics.rotate(rotWobble)
@@ -146,8 +147,10 @@ local function drawClock()
   local  y = GAMEHEIGHT * 0.7
   local  width = GAMEWIDTH * 0.2
   local  height = GAMEHEIGHT * 0.1
-  local  text = string.format("5:59:%02d", gameplay.countdownTimer)
-  if gameplay.countdownTimer >= 60 then
+  local  minutes = math.floor(gameplay.countdownTimer / 60)
+  local  seconds = math.floor(gameplay.countdownTimer % 60)
+  local  text = string.format("5:%02d:%02d", minutes, seconds)
+  if minutes >= 60 then
     text = "6:00:00"
   end
 
@@ -155,12 +158,12 @@ local function drawClock()
   love.graphics.setFont(ClockFont)
   if gameplay.isCountdownPaused then
     love.graphics.setColor(themes.current.primary)
-    love.graphics.rectangle("fill", x, y, width, height)
-    love.graphics.setColor(themes.current.secondary)
+    love.graphics.rectangle("line", x, y, width, height)
     love.graphics.printf(text, x, y , width, "center")
   else 
     love.graphics.setColor(themes.current.primary)
-    love.graphics.rectangle("line", x, y, width, height)
+    love.graphics.rectangle("fill", x, y, width, height)
+    love.graphics.setColor(themes.current.secondary)
     love.graphics.printf(text, x, y , width, "center")
     
   end
@@ -180,7 +183,7 @@ local function drawGameOver()
   love.graphics.setFont(LargeFont)
   love.graphics.printf(string.format("The boss was %.0f%% awake", awakePercentage * 100), 0, GAMEHEIGHT * 0.35, GAMEWIDTH, "center")
   love.graphics.printf(string.format("but it was not enough", awakePercentage * 100), 0, GAMEHEIGHT * 0.45, GAMEWIDTH, "center")
-  love.graphics.printf(string.format("you have been replaced by tech", awakePercentage * 100), 0, GAMEHEIGHT * 0.55, GAMEWIDTH, "center")
+  love.graphics.printf(string.format("you have been replaced by tech", awakePercentage * 100), 0, GAMEHEIGHT * 0.5, GAMEWIDTH, "center")
 
 
 
@@ -235,7 +238,7 @@ end
 local function handlePaddle(dt)
   -- found a bug where if the player is moving the paddle when time goes over 60 seconds, 
   -- the paddle will continue to move and the player can still hit the target. This is a fix for that bug.
-  if gameplay.countdownTimer >= 60 or isGameOver then return end
+  if gameplay.countdownTimer >= 3600 or isGameOver then return end
   
   if love.mouse.isDown(1) or love.keyboard.isDown("space") then
     isCharging = true
@@ -245,7 +248,7 @@ local function handlePaddle(dt)
       gameplay.playOnce = false
     end
     local paddleBarRatio = chargeBarHeight/paddleY
-    local randomMagnitude = love.math.random(3, 10) 
+    local randomMagnitude = love.math.random(1, 2) 
     screenShake.trigger(randomMagnitude*paddleBarRatio, 0.1)
     love.audio.setVolume(paddleBarRatio)
     if paddleY > chargeBarY then
@@ -315,7 +318,7 @@ function gameplay:enter()
   screenShake.stop()
   generateTarget()
   resetPaddle()
-  self.countdownTimer = love.timer.getTime()
+  gameplay.countdownTimer = love.timer.getTime()
   sounds.snore:play()
   sounds.lalaby:play()
 
@@ -325,7 +328,7 @@ end
 
 function gameplay:update(dt)
   screenShake.update(dt)
-  if gameplay.countdownTimer >= 60 or (debug and love.keyboard.isDown("g"))  then
+  if gameplay.countdownTimer >= 3600 or (debug and love.keyboard.isDown("g"))  then
     calculateAwakePercentage()
     isGameOver = true
     sounds.snore:stop()
