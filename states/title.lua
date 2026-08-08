@@ -36,7 +36,6 @@ end
 
 function title:enter()
   screenShake.stop() -- Stop any ongoing screen shake when entering the title state
-  love.graphics.setBackgroundColor(themes.current.primary)
   self.enterTime = love.timer.getTime()
   sounds.rooster:stop()
   sounds.rooster:play()
@@ -47,7 +46,7 @@ function title:draw()
   push:apply("start")
 
   love.graphics.translate(screenShake.shakeOffsetX, screenShake.shakeOffsetY)
-  love.graphics.setColor(themes.current.primary)
+  love.graphics.setColor(themes.current.secondary)
   love.graphics.rectangle("fill", 0, 0, GAMEWIDTH, GAMEHEIGHT)
     
 
@@ -79,7 +78,7 @@ function title:draw()
   mouseX, mouseY = push:toGame(mouseX, mouseY)
   --nil is returned if mouse is outside the game screen
 
-  love.graphics.setColor(themes.current.secondary)
+  love.graphics.setColor(themes.current.primary)
   if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
 
 
@@ -90,21 +89,21 @@ function title:draw()
     
     -- Button colors invert on hover and click
     if isButtonHovered() and not love.mouse.isDown(1) then
-      love.graphics.setColor(themes.current.secondary)
+      love.graphics.setColor(themes.current.primary)
       love.graphics.rectangle("fill", button.x, button.y, button.width, button.height, button.height/4)
       --text
-      love.graphics.setColor(themes.current.primary)
+      love.graphics.setColor(themes.current.secondary)
       love.graphics.printf(button.text, button.x, button.y , button.width, "center")
 
     else
-      love.graphics.setColor(themes.current.secondary)
+      love.graphics.setColor(themes.current.primary)
       love.graphics.rectangle("line", button.x, button.y, button.width, button.height, button.height/4)
       --text
       love.graphics.printf(button.text, button.x, button.y , button.width, "center")
     end
 
     -- Set the scene and instructions for the player
-    love.graphics.setColor(themes.current.secondary)
+    love.graphics.setColor(themes.current.primary)
     love.graphics.setFont(LargeFont)
     love.graphics.printf("Wake up the farmer before 6am or get the chop!", 0, GAMEHEIGHT * 0.4, GAMEWIDTH, "center")
     love.graphics.setFont(MediumFont)
