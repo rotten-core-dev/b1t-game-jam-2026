@@ -3,7 +3,7 @@ local sounds = require "src/sounds" --require the library
 local camera = require "lib/camera" --require the library
 --local gameover = require("states/gameover")
 --local titleState = require("states/title")
-
+local rot = 0
 local gameplay = {
   enterTime = 0.0,
   nextState = nil,
@@ -277,7 +277,7 @@ local function handlePaddle(dt)
         gameplay.trigTime = currentTime
         gameplay.trigTimeOnce = true
         gameplay.setNewTarget = true
-        screenShake.trigger(2*chargeBarHeight/paddleY, gameplay.hitPause*1) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
+        screenShake.trigger(2, 0.5) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
 
 
         if debug then
@@ -343,6 +343,7 @@ function gameplay:update(dt)
     growTarget(dt)
     handlePaddle(dt)
     handleTimers(dt)
+    
     if currentTime - gameplay.trigTimePause > gameplay.trigTime 
     and gameplay.trigTimeOnce then
       gameplay.hit = true
@@ -352,6 +353,11 @@ function gameplay:update(dt)
       gameplay.trigTimeOnce = false
     end
     if currentTime - gameplay.hitPause > gameplay.hitTime then
+      
+      if not gameplay.setNewTarget then
+        rot = math.min(chargeBarHeight/paddleY - 1.2, 1.3)
+      end
+
       sounds.lalaby:play()
       if gameplay.setNewTarget 
       and  currentTime - (gameplay.hitPause*gameplay.hitPauseWait) > gameplay.hitTime 
@@ -401,6 +407,46 @@ function gameplay:draw()
     -- set the foreground color to the primary color
     love.graphics.setColor(themes.current.primary)
 
+
+        -- Rooster
+    local xm = GAMEWIDTH/2 + 50
+    local ym = GAMEHEIGHT/2 - 30
+    local hx = xm
+    local hy = ym
+    local headRot = 0 
+    local eyeMod = 0
+    local eyeShake = 2
+    local eyeSpeed = 4
+    local eyeArt = imageGuy.eyesClosed
+    local longeyes = 0
+    -- local rot = 0
+
+    -- rot = math.min(chargeBarHeight/paddleY - 1.2, 1.3)
+
+    if gameplay.hit then
+      eyeMod = -20
+      eyeShake = 2
+      eyeSpeed = 20
+      eyeArt = imageGuy.eyesOpen
+      longeyes = math.min((gameplay.successfulHits), 10)
+    end
+    drawArt(imageRooster.body,xm+35,ym + 60,0,0)
+    drawArt(imageRooster.tail,xm+105,ym + 60,0,0)
+    drawArt(imageRooster.wing,xm+45,ym + 90,0,0)
+
+    
+  
+
+    love.graphics.push()
+    love.graphics.setColor(1,1,1,1)
+    love.graphics.translate(hx+10, hy)
+    love.graphics.rotate(rot)
+    drawArt(imageRooster.head,0, 0,0,0)
+    drawArt(imageRooster.beakBtm,-37,   5,0,0)
+    drawArt(imageRooster.beakTop,-37,  - 5,0,0)
+    love.graphics.translate(-hx+10, -hy)
+    love.graphics.pop()
+
     --nil is returned if mouse is outside the game screen
     -- local mouseX, mouseY = love.mouse.getPosition()
     -- mouseX, mouseY = push:toGame(mouseX, mouseY)
@@ -414,7 +460,7 @@ function gameplay:draw()
 
     -- instructions  
   love.graphics.setFont(SmallFont)
-  love.graphics.printf("Hold [SPACE] or Mouse", 0, GAMEHEIGHT * 0.1, GAMEWIDTH, "right")
+  love.graphics.printf("Hold [SPACE] or Mouse", 0, GAMEHEIGHT * 0.1, GAMEWIDTH* 0.99, "center")
   if isGameOver then
     love.graphics.setFont(LargeFont)
     love.graphics.printf("GAME OVER", 0, GAMEHEIGHT * 0.2, GAMEWIDTH, "center")

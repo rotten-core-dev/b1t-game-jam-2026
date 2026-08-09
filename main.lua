@@ -59,6 +59,16 @@ function love.load()
         pillow = love.graphics.newImage("assets/img/pillow.png"),
         stash = love.graphics.newImage("assets/img/stash.png")
     }
+     -- ROOSTER
+    imageRooster = {
+        beakBtm = love.graphics.newImage("assets/img/rooster/beakBtm.png"),
+        beakTop = love.graphics.newImage("assets/img/rooster/beakTop.png"),
+        body = love.graphics.newImage("assets/img/rooster/body.png"),
+        foot = love.graphics.newImage("assets/img/rooster/foot.png"),
+        head = love.graphics.newImage("assets/img/rooster/head.png"),
+        tail = love.graphics.newImage("assets/img/rooster/tail.png"),
+        wing = love.graphics.newImage("assets/img/rooster/wing.png"),
+    }
     state.switch(require "states/intro") --switch to the intro state
 end
 
