@@ -25,11 +25,10 @@ function love.load()
 
     love.graphics.setBackgroundColor(themes.current.background)
 
-    local windowWidth, windowHeight = love.window.getDesktopDimensions()
-    windowWidth, windowHeight = windowWidth*.5, windowHeight*.5
+    local windowWidth, windowHeight = 800, 600 --this is simpler to set the window size that we want.
 
     push:setupScreen(GAMEWIDTH, GAMEHEIGHT, windowWidth, windowHeight, {
-    fullscreen = false,
+    --fullscreen = false,
     resizable = true,
     upscale = 'normal', 
     --highdpi = true,
@@ -47,7 +46,7 @@ function love.load()
     love.graphics.setFont(ClockFont)
 
     -- cover art image
-    CoverArt = love.graphics.newImage("assets/img/rooster.png") --require the library
+    CoverArt = love.graphics.newImage("assets/img/rooster-cover-dark.png") --require the library
 
     -- GUY
     imageGuy = {
@@ -66,21 +65,12 @@ end
 
 function love.keypressed(key, scancode, isrepeat)
   
-    
-    --be sure to reset push settings
-    --push:resetSettings()
-    
-
-
     if key == "f" then --activate fullscreen mode
         push:switchFullscreen() --optional width and height parameters for window mode
     elseif key == "escape" then 
-        love.event.quit() 
-    -- else 
-    --     local currentState = state.currentState
-    --     if currentState.nextState then
-    --         state.switch(currentState.nextState) --switch to the next state
-    --     end
+        -- changed this for the web version as quit causes a crash
+        push:switchFullscreen()
+        -- love.event.quit() --quit the game
     end
 end
 
