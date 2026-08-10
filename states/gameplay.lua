@@ -36,7 +36,7 @@ local button = {
     width = GAMEWIDTH * 0.2,
     height = GAMEHEIGHT * 0.1,
     x = GAMEWIDTH * 0.5 - (GAMEWIDTH * 0.2) * 0.5, -- have  to center here if we want it centered
-    y = GAMEHEIGHT * 0.85,
+    y = GAMEHEIGHT * 0.87,
     text = "RETRY"
 }
 
@@ -179,28 +179,30 @@ end
 
 local function drawGameOver()
 
-  love.graphics.setColor(themes.current.primary)
   love.graphics.setFont(TitleFont)
   love.graphics.printf("GAME OVER", 0, GAMEHEIGHT * 0.2, GAMEWIDTH, "center")
   love.graphics.setFont(LargeFont)
-  love.graphics.printf(string.format("The boss was %.0f%% awake", awakePercentage * 100), 0, GAMEHEIGHT * 0.35, GAMEWIDTH, "center")
-  love.graphics.printf(string.format("but it was not enough", awakePercentage * 100), 0, GAMEHEIGHT * 0.45, GAMEWIDTH, "center")
+  love.graphics.printf(string.format("but it was not enough", awakePercentage * 100), 0, GAMEHEIGHT * 0.8, GAMEWIDTH, "center")
   love.graphics.printf(string.format("you have been replaced by tech", awakePercentage * 100), 0, GAMEHEIGHT * 0.5, GAMEWIDTH, "center")
-
-
-
-    -- changes scale and height of cover art
+  
+  
+  love.graphics.setColor(themes.current.primary)
+  
+  love.graphics.rectangle("fill", 0,0, GAMEWIDTH,GAMEHEIGHT)
+  -- changes scale and height of cover art
   local artScaleFactor = 1
-  local artYModifier = 0.125
+  local artYModifier = 0.09
   local art = toolate
-
+  
   local artScale = GAMEWIDTH * artScaleFactor / art:getWidth()
   local artWidth = art:getWidth() * artScale
   local artX = GAMEWIDTH * 0.5 - artWidth * 0.5
   local artY = GAMEHEIGHT * artYModifier - 30
-
+  
   love.graphics.draw(art, artX, artY, artRotation, artScale, artScale)
-
+  
+  love.graphics.setColor(themes.current.secondary)
+  love.graphics.printf(string.format("The boss was %.0f%% awake", awakePercentage * 100), 0, GAMEHEIGHT * 0.8, GAMEWIDTH, "center")
 
 end
 
@@ -208,6 +210,8 @@ local function drawMouseCursor()
   local mouseX, mouseY = love.mouse.getPosition()
   mouseX, mouseY = push:toGame(mouseX, mouseY)
   --nil is returned if mouse is outside the game screen
+  love.graphics.setColor(themes.current.secondary)
+  if mouseX and mouseY then love.graphics.circle("fill", mouseX, mouseY, 10) end
   love.graphics.setColor(themes.current.primary)
   if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
 end
@@ -400,8 +404,8 @@ function gameplay:draw()
 
   if isGameOver then
     drawGameOver()
-    drawMouseCursor()
     drawButton()
+    drawMouseCursor()
   else
   
     local padH = (chargeBarHeight/paddleY)
