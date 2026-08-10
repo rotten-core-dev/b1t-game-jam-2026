@@ -435,9 +435,10 @@ function gameplay:draw()
     local hx = xm
     local hy = ym
     local cx = xm + (gameplay.countdownTimer/2) - 1000
+    local sy = ym - (gameplay.countdownTimer/4) + 500
 
 
-    drawArt(bg.sky,xm,ym,0,0)
+    drawArt(bg.sky,xm,sy,0,0)
     drawArt(bg.clouds,cx,ym,0,0)
     drawArt(bg.bg,xm,ym,0,0)
 
