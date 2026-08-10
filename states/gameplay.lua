@@ -175,6 +175,8 @@ local function drawClock()
 
 end
 
+
+
 local function drawGameOver()
 
   love.graphics.setColor(themes.current.primary)
@@ -515,15 +517,21 @@ function gameplay:draw()
     love.graphics.printf("you have been replaced by tech", 0, GAMEHEIGHT * 0.5, GAMEWIDTH, "center")
 
   end
-  -- draw a rectangle towards top of screen for our charging and timing bar
+  -- draw a rectangle towards right of screen for our charging and timing bar
   love.graphics.rectangle("line", chargeBarX, chargeBarY, chargeBarWidth, chargeBarHeight)
+
+  -- draw a rectangle towards left of screen for our time remaining bar
+  love.graphics.rectangle("line", GAMEWIDTH * 0.1, chargeBarY, chargeBarWidth, chargeBarHeight)
+
+  -- fill the timer bar
+  love.graphics.rectangle("fill", GAMEWIDTH * 0.1, chargeBarY, chargeBarWidth, chargeBarHeight * (gameplay.countdownTimer / 3600))
 
     drawTarget()
     -- draw the paddle
     love.graphics.rectangle("fill", paddleX, paddleY, paddleWidth, paddleHeight,5)
 
   -- self:drawArrow()
-  drawClock()
+  --drawClock()
   -- guy
   local xm = GAMEWIDTH/2
   local ym = GAMEHEIGHT/2 + 70
