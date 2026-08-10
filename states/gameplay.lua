@@ -418,12 +418,11 @@ function gameplay:draw()
     local hx = xm
     local hy = ym
     local cx = xm + (gameplay.countdownTimer/2) - 1000
-    local bgy = ym - (gameplay.countdownTimer/4) + 500
 
 
-    drawArt(bg.sky,xm,bgy,0,0)
+    drawArt(bg.sky,xm,ym,0,0)
     drawArt(bg.clouds,cx,ym,0,0)
-    drawArt(bg.bg,xm,ym+ 20,0,0)
+    drawArt(bg.bg,xm,ym,0,0)
 
 
 
@@ -504,11 +503,11 @@ function gameplay:draw()
 
     -- title at top of screen  
     love.graphics.setFont(LargeFont)
-    love.graphics.printf("COCK-A-DOODLE-DO!", 0, GAMEHEIGHT * 0.04, GAMEWIDTH, "center")
+    love.graphics.printf("COCK-A-DOODLE-DO!", 0, GAMEHEIGHT * 0.05, GAMEWIDTH, "center")
 
     -- instructions  
   love.graphics.setFont(SmallFont)
-  love.graphics.printf("Hold [SPACE] or Mouse", 0, GAMEHEIGHT * 0.15, GAMEWIDTH* 0.99, "center")
+  love.graphics.printf("Hold [SPACE] or Mouse", 0, GAMEHEIGHT * 0.1, GAMEWIDTH* 0.99, "center")
   if isGameOver then
     love.graphics.setFont(LargeFont)
     love.graphics.printf("GAME OVER", 0, GAMEHEIGHT * 0.2, GAMEWIDTH, "center")
@@ -525,7 +524,8 @@ function gameplay:draw()
   love.graphics.rectangle("line", GAMEWIDTH * 0.1, chargeBarY, chargeBarWidth, chargeBarHeight)
 
   -- fill the timer bar
-  love.graphics.rectangle("fill", GAMEWIDTH * 0.1, chargeBarY, chargeBarWidth, chargeBarHeight * (gameplay.countdownTimer / 3600))
+  local timerStartY = chargeBarY + chargeBarHeight
+  love.graphics.rectangle("fill", GAMEWIDTH * 0.1, timerStartY, chargeBarWidth, - chargeBarHeight * (gameplay.countdownTimer / 3600))
 
     drawTarget()
     -- draw the paddle
