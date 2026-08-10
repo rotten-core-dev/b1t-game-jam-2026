@@ -36,8 +36,8 @@ local button = {
     width = GAMEWIDTH * 0.2,
     height = GAMEHEIGHT * 0.1,
     x = GAMEWIDTH * 0.5 - (GAMEWIDTH * 0.2) * 0.5, -- have  to center here if we want it centered
-    y = GAMEHEIGHT * 0.7,
-    text = "PLAY"
+    y = GAMEHEIGHT * 0.85,
+    text = "RETRY"
 }
 
 local function isButtonHovered()
@@ -189,6 +189,19 @@ local function drawGameOver()
 
 
 
+    -- changes scale and height of cover art
+  local artScaleFactor = 1
+  local artYModifier = 0.125
+  local art = toolate
+
+  local artScale = GAMEWIDTH * artScaleFactor / art:getWidth()
+  local artWidth = art:getWidth() * artScale
+  local artX = GAMEWIDTH * 0.5 - artWidth * 0.5
+  local artY = GAMEHEIGHT * artYModifier - 30
+
+  love.graphics.draw(art, artX, artY, artRotation, artScale, artScale)
+
+
 end
 
 local function drawMouseCursor()
@@ -205,14 +218,14 @@ local function drawButton()
   local cornerRadius = button.height / 4
   -- Button colors invert on hover and click
   if isButtonHovered() and not love.mouse.isDown(1) then
-    love.graphics.setColor(themes.current.primary)
+    love.graphics.setColor(themes.current.secondary)
     love.graphics.rectangle("fill", button.x, button.y, button.width, button.height, cornerRadius)
     --text
-    love.graphics.setColor(themes.current.secondary)
+    love.graphics.setColor(themes.current.primary)
     love.graphics.printf(button.text, button.x, button.y, button.width, "center")
 
   else
-    love.graphics.setColor(themes.current.primary)
+    love.graphics.setColor(themes.current.secondary)
     love.graphics.rectangle("line", button.x, button.y, button.width, button.height, cornerRadius)
     --text
     love.graphics.printf(button.text, button.x, button.y, button.width, "center")
@@ -509,15 +522,23 @@ function gameplay:draw()
     -- instructions  
   love.graphics.setFont(SmallFont)
   love.graphics.printf("Hold [SPACE] or Mouse", 0, GAMEHEIGHT * 0.15, GAMEWIDTH* 0.99, "center")
-  if isGameOver then
-    love.graphics.setFont(LargeFont)
-    love.graphics.printf("GAME OVER", 0, GAMEHEIGHT * 0.2, GAMEWIDTH, "center")
-    love.graphics.setFont(LargeFont)
-    love.graphics.printf(string.format("The boss was %.0f%% awake ", awakePercentage * 100), 0, GAMEHEIGHT * 0.3, GAMEWIDTH, "center")
-    love.graphics.printf("but it was not enough", 0, GAMEHEIGHT * 0.4, GAMEWIDTH, "center")
-    love.graphics.printf("you have been replaced by tech", 0, GAMEHEIGHT * 0.5, GAMEWIDTH, "center")
+  -- if isGameOver then
+  --   love.graphics.setFont(LargeFont)
+  --   love.graphics.printf("GAME OVER", 0, GAMEHEIGHT * 0.2, GAMEWIDTH, "center")
+  --   love.graphics.setFont(LargeFont)
+  --   love.graphics.printf(string.format("The boss was %.0f%% awake ", awakePercentage * 100), 0, GAMEHEIGHT * 0.3, GAMEWIDTH, "center")
+  --   love.graphics.printf("dead", 0, GAMEHEIGHT * 0.4, GAMEWIDTH, "center")
+  --   love.graphics.printf("you have been replaced by tech", 0, GAMEHEIGHT * 0.5, GAMEWIDTH, "center")
 
-  end
+  --     -- frame
+  --   local xm = GAMEWIDTH/2
+  --   local ym = GAMEHEIGHT/2
+  --   local hx = xm
+  --   local hy = ym
+
+  --   drawArt(imageRooster.crow,xm,ym,0,0)
+
+  -- end
   -- draw a rectangle towards right of screen for our charging and timing bar
   love.graphics.rectangle("line", chargeBarX, chargeBarY, chargeBarWidth, chargeBarHeight)
 
