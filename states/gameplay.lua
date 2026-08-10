@@ -167,11 +167,11 @@ local function drawClock()
     love.graphics.printf(text, x, y , width, "center")
     
   end
-  if debug then
-    love.graphics.setColor(themes.current.primary)
-    love.graphics.setFont(SmallFont)
-    love.graphics.printf(string.format("Stoppage Time: %.2f", gameplay.stoppageTime), x, y - height, width, "center")
-  end
+  -- if debug then
+  --   love.graphics.setColor(themes.current.primary)
+  --   love.graphics.setFont(SmallFont)
+  --   love.graphics.printf(string.format("Stoppage Time: %.2f", gameplay.stoppageTime), x, y - height, width, "center")
+  -- end
 
 end
 
@@ -401,51 +401,96 @@ function gameplay:draw()
 
 
     -- this is the background color
-    love.graphics.setColor(themes.current.secondary)
+    love.graphics.setColor(themes.current.primary)
     love.graphics.rectangle("fill", 0, 0, GAMEWIDTH, GAMEHEIGHT)
 
     -- set the foreground color to the primary color
     love.graphics.setColor(themes.current.primary)
 
 
-        -- Rooster
-    local xm = GAMEWIDTH/2 + 50
-    local ym = GAMEHEIGHT/2 - 30
+
+
+  -- background
+    local xm = GAMEWIDTH/2
+    local ym = GAMEHEIGHT/2
     local hx = xm
     local hy = ym
-    local headRot = 0 
-    local eyeMod = 0
-    local eyeShake = 2
-    local eyeSpeed = 4
-    local eyeArt = imageGuy.eyesClosed
-    local longeyes = 0
-    -- local rot = 0
+    local cx = xm + (gameplay.countdownTimer/2) - 1000
 
-    -- rot = math.min(chargeBarHeight/paddleY - 1.2, 1.3)
+
+    drawArt(bg.sky,xm,ym,0,0)
+    drawArt(bg.clouds,cx,ym,0,0)
+    drawArt(bg.bg,xm,ym,0,0)
+
+
+
+
+
+        -- Rooster
+        
+    local xm = GAMEWIDTH/2 + 20
+    local ym = GAMEHEIGHT/2 - 40 - 50 + (paddleY/3)
+    local hx = xm
+    local hy = ym
+    local art = imageRooster.still
+    local wobSpeed = 20
 
     if gameplay.hit then
-      eyeMod = -20
-      eyeShake = 2
-      eyeSpeed = 20
-      eyeArt = imageGuy.eyesOpen
-      longeyes = math.min((gameplay.successfulHits), 10)
+      art = imageRooster.crow
+      ym = GAMEHEIGHT/2 - 80 
+      wobSpeed = 100
     end
-    drawArt(imageRooster.body,xm+35,ym + 60,0,0)
-    drawArt(imageRooster.tail,xm+105,ym + 60,0,0)
-    drawArt(imageRooster.wing,xm+45,ym + 90,0,0)
+    drawArt(art,xm+35,ym + 60,2,wobSpeed)
+
+            
+    -- local xm = GAMEWIDTH/2 + 50
+    -- local ym = GAMEHEIGHT/2 - 30
+    -- local hx = xm
+    -- local hy = ym
+    -- local headRot = 0 
+    -- local eyeMod = 0
+    -- local eyeShake = 2
+    -- local eyeSpeed = 4
+    -- local eyeArt = imageGuy.eyesClosed
+    -- local longeyes = 0
+    -- -- local rot = 0
+
+    -- -- rot = math.min(chargeBarHeight/paddleY - 1.2, 1.3)
+
+    -- if gameplay.hit then
+    --   eyeMod = -20
+    --   eyeShake = 2
+    --   eyeSpeed = 20
+    --   eyeArt = imageGuy.eyesOpen
+    --   longeyes = math.min((gameplay.successfulHits), 10)
+    -- end
+    -- drawArt(imageRooster.body,xm+35,ym + 60,0,0)
+    -- drawArt(imageRooster.tail,xm+105,ym + 60,0,0)
+    -- drawArt(imageRooster.wing,xm+45,ym + 90,0,0)
 
     
   
 
-    love.graphics.push()
-    love.graphics.setColor(1,1,1,1)
-    love.graphics.translate(hx+10, hy)
-    love.graphics.rotate(rot)
-    drawArt(imageRooster.head,0, 0,0,0)
-    drawArt(imageRooster.beakBtm,-37,   5,0,0)
-    drawArt(imageRooster.beakTop,-37,  - 5,0,0)
-    love.graphics.translate(-hx+10, -hy)
-    love.graphics.pop()
+    -- love.graphics.push()
+    -- love.graphics.setColor(1,1,1,1)
+    -- love.graphics.translate(hx+10, hy)
+    -- love.graphics.rotate(rot)
+    -- drawArt(imageRooster.head,0, 0,0,0)
+    -- drawArt(imageRooster.beakBtm,-37,   5,0,0)
+    -- drawArt(imageRooster.beakTop,-37,  - 5,0,0)
+    -- love.graphics.translate(-hx+10, -hy)
+    -- love.graphics.pop()
+
+
+      -- frame
+    local xm = GAMEWIDTH/2
+    local ym = GAMEHEIGHT/2
+    local hx = xm
+    local hy = ym
+
+    drawArt(bg.frame,xm,ym,0,0)
+    drawArt(bg.wall,xm,ym,0,0)
+
 
     --nil is returned if mouse is outside the game screen
     -- local mouseX, mouseY = love.mouse.getPosition()

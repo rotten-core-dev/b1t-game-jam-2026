@@ -16,6 +16,8 @@ function love.resize(w, h)
 end
 
 function love.load()
+
+
     currentTime = love.timer.getTime()
     love.graphics.setDefaultFilter("nearest", "nearest") --disable blurry scaling
 
@@ -61,6 +63,10 @@ function love.load()
     }
      -- ROOSTER
     imageRooster = {
+        crow = love.graphics.newImage("assets/img/rooster/roosterCrow.png"),
+        still = love.graphics.newImage("assets/img/rooster/roosterStill.png"),
+        
+
         beakBtm = love.graphics.newImage("assets/img/rooster/beakBtm.png"),
         beakTop = love.graphics.newImage("assets/img/rooster/beakTop.png"),
         body = love.graphics.newImage("assets/img/rooster/body.png"),
@@ -68,6 +74,16 @@ function love.load()
         head = love.graphics.newImage("assets/img/rooster/head.png"),
         tail = love.graphics.newImage("assets/img/rooster/tail.png"),
         wing = love.graphics.newImage("assets/img/rooster/wing.png"),
+    }
+
+    -- background
+    bg = {
+        bg = love.graphics.newImage("assets/img/bg/bg.png"),
+        clouds = love.graphics.newImage("assets/img/bg/clouds.png"),
+        wall = love.graphics.newImage("assets/img/bg/wall.png"),
+        frame = love.graphics.newImage("assets/img/bg/frame.png"),
+        sky = love.graphics.newImage("assets/img/bg/sky.png"),
+
     }
     state.switch(require "states/intro") --switch to the intro state
 end
