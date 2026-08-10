@@ -59,12 +59,8 @@ function title:draw()
   -- we will use the one scale for x and y to maintain the aspect ratio
   
   -- changes scale and height of cover art
-  local artScaleFactor = 0.8
-  local artYModifier = 0.2
-  if waitingToStart then 
-    artScaleFactor = 1.1
-    artYModifier = 0.1
-  end
+  local artScaleFactor = 1.1
+  local artYModifier = 0.1
 
   local artScale = GAMEWIDTH * artScaleFactor / CoverArt:getWidth()
   local artWidth = CoverArt:getWidth() * artScale

@@ -49,6 +49,8 @@ function love.load()
 
     -- cover art image
     CoverArt = love.graphics.newImage("assets/img/splash.png") --require the library
+    rottenArt = love.graphics.newImage("assets/img/rotten.PNG") --require the library
+
 
     -- GUY
     imageGuy = {

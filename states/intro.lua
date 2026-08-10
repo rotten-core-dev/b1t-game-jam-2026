@@ -29,9 +29,23 @@ function intro:draw()
   love.graphics.setColor(themes.current.primary)
   if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
 
-  love.graphics.printf("Rotten Core Games", 0, GAMEHEIGHT/3, GAMEWIDTH, "center")
-  love.graphics.printf("Presents", 0, GAMEHEIGHT/2, GAMEWIDTH, "center")
-  love.graphics.translate(-screenShake.shakeOffsetX, -screenShake.shakeOffsetY)
+
+    -- changes scale and height of cover art
+  local artScaleFactor = 1.1
+  local artYModifier = 0.25
+  local art = rottenArt
+
+  local artScale = GAMEWIDTH * artScaleFactor / art:getWidth()
+  local artWidth = art:getWidth() * artScale
+  local artX = GAMEWIDTH * 0.5 - artWidth * 0.5
+  local artY = GAMEHEIGHT * artYModifier - 30
+
+  love.graphics.draw(art, artX, artY, artRotation, artScale, artScale)
+
+
+  -- love.graphics.printf("Rotten Core Games", 0, GAMEHEIGHT/3, GAMEWIDTH, "center")
+  -- love.graphics.printf("Presents", 0, GAMEHEIGHT/2, GAMEWIDTH, "center")
+  -- love.graphics.translate(-screenShake.shakeOffsetX, -screenShake.shakeOffsetY)
   push:apply("end")
 end
 
