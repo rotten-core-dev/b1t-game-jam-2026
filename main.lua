@@ -4,6 +4,7 @@ push = require "lib/push" --require the library
 themes = require "lib/themes" --require the library
 --screenShake = require "lib/screenShake" --require the library
 state = require "lib/state" --require the library
+sounds = require "src/sounds" --require the library
 
 --pixelfont = require "assets/fonts/pixel.ttf" --require the library
 
@@ -26,6 +27,9 @@ function love.load()
     love.window.setTitle("COCK-A-DOODLE-DO!")
 
     love.graphics.setBackgroundColor(themes.current.background)
+
+    sounds.lalaby:setLooping(true)
+    
 
     local windowWidth, windowHeight = 800, 600 --this is simpler to set the window size that we want.
 

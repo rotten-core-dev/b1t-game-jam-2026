@@ -27,7 +27,7 @@ local gameplay = {
   stoppageTime = 0.0,
 }
 
-local debug = true
+local debug = false
 local isGameOver = false
 local awakePercentage = 0.00
 
@@ -290,7 +290,7 @@ local function handlePaddle(dt)
         sounds.rooster:stop()
         sounds.rooster:play()
         sounds.snore:stop()
-        sounds.lalaby:stop()
+       -- sounds.lalaby:stop()
         gameplay.hitTime = currentTime
 
         gameplay.trigTime = currentTime
@@ -339,7 +339,7 @@ function gameplay:enter()
   resetPaddle()
   gameplay.countdownTimer = love.timer.getTime()
   sounds.snore:play()
-  sounds.lalaby:play()
+ -- sounds.lalaby:play()
 
   -- screenShake.trigger(5, 1.0) -- Trigger a screen shake with strength 5 and duration 0.5 seconds
 end
@@ -351,7 +351,7 @@ function gameplay:update(dt)
     calculateAwakePercentage()
     isGameOver = true
     sounds.snore:stop()
-    sounds.lalaby:stop()
+  --  sounds.lalaby:stop()
   end
 
   if isGameOver then
@@ -377,7 +377,7 @@ function gameplay:update(dt)
         rot = math.min(chargeBarHeight/paddleY - 1.2, 1.3)
       end
 
-      sounds.lalaby:play()
+   --   sounds.lalaby:play()
       if gameplay.setNewTarget 
       and  currentTime - (gameplay.hitPause*gameplay.hitPauseWait) > gameplay.hitTime 
       then

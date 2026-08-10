@@ -12,7 +12,7 @@ sounds.snore = love.audio.newSource("assets/sounds/snore2.ogg", "static")
 sounds.dudeGasp = love.audio.newSource("assets/sounds/dudeGasp.ogg", "static")
 sounds.dudeGasp2 = love.audio.newSource("assets/sounds/dudeGasp2.ogg", "static")
 sounds.click = love.audio.newSource("assets/sounds/heavyClick.ogg", "static")
-sounds.lalaby = love.audio.newSource("assets/sounds/lalaby.ogg", "static")
+sounds.lalaby = love.audio.newSource("assets/sounds/lalaby.ogg", "stream")
 
 
 

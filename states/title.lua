@@ -72,6 +72,7 @@ function title:draw()
   
   -- DRAW BUTTON AND PLAYER INSTRUCTIONS AFTER TITLE HAS SHOWN
   if waitingToStart then
+    sounds.lalaby:play()
     
     love.graphics.setFont(TitleFont)
     
