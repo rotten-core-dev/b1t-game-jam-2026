@@ -48,7 +48,7 @@ function love.load()
     love.graphics.setFont(ClockFont)
 
     -- cover art image
-    CoverArt = love.graphics.newImage("assets/img/rooster-cover-dark.png") --require the library
+    CoverArt = love.graphics.newImage("assets/img/splash.png") --require the library
 
     -- GUY
     imageGuy = {
@@ -82,7 +82,7 @@ function love.load()
         clouds = love.graphics.newImage("assets/img/bg/clouds.png"),
         wall = love.graphics.newImage("assets/img/bg/wall.png"),
         frame = love.graphics.newImage("assets/img/bg/frame.png"),
-        sky = love.graphics.newImage("assets/img/bg/sky.png"),
+        sky = love.graphics.newImage("assets/img/sunrise.png"),
 
     }
     state.switch(require "states/intro") --switch to the intro state

@@ -16,7 +16,7 @@ local title = {
 
 local button = {
     x = GAMEWIDTH * 0.7,
-    y = GAMEHEIGHT * 0.7,
+    y = GAMEHEIGHT * 0.8,
     width = GAMEWIDTH * 0.2,
     height = GAMEHEIGHT * 0.1,
     text = "PLAY"
@@ -62,57 +62,61 @@ function title:draw()
   local artScaleFactor = 0.8
   local artYModifier = 0.2
   if waitingToStart then 
-    artScaleFactor = 0.5 
+    artScaleFactor = 1.1
     artYModifier = 0.1
   end
 
   local artScale = GAMEWIDTH * artScaleFactor / CoverArt:getWidth()
   local artWidth = CoverArt:getWidth() * artScale
   local artX = GAMEWIDTH * 0.5 - artWidth * 0.5
-  local artY = GAMEHEIGHT * artYModifier
+  local artY = GAMEHEIGHT * artYModifier - 30
 
   love.graphics.draw(CoverArt, artX, artY, artRotation, artScale, artScale)
 
-  -- DRAW MOUSE CURSOR AS
-  local mouseX, mouseY = love.mouse.getPosition()
-  mouseX, mouseY = push:toGame(mouseX, mouseY)
-  --nil is returned if mouse is outside the game screen
-
-  love.graphics.setColor(themes.current.primary)
-  if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
-
-
+  
   -- DRAW BUTTON AND PLAYER INSTRUCTIONS AFTER TITLE HAS SHOWN
   if waitingToStart then
-
+    
     love.graphics.setFont(TitleFont)
     
     -- Button colors invert on hover and click
     if isButtonHovered() and not love.mouse.isDown(1) then
-      love.graphics.setColor(themes.current.primary)
+      love.graphics.setColor(themes.current.secondary)
       love.graphics.rectangle("fill", button.x, button.y, button.width, button.height, button.height/4)
       --text
-      love.graphics.setColor(themes.current.secondary)
+      love.graphics.setColor(themes.current.primary)
       love.graphics.printf(button.text, button.x, button.y , button.width, "center")
 
     else
-      love.graphics.setColor(themes.current.primary)
+      love.graphics.setColor(themes.current.secondary)
       love.graphics.rectangle("line", button.x, button.y, button.width, button.height, button.height/4)
       --text
       love.graphics.printf(button.text, button.x, button.y , button.width, "center")
     end
 
-    -- Set the scene and instructions for the player
-    love.graphics.setColor(themes.current.primary)
-    love.graphics.setFont(LargeFont)
-    love.graphics.printf("Wake up the farmer before 6am or get the chop!", 0, GAMEHEIGHT * 0.4, GAMEWIDTH, "center")
-    love.graphics.setFont(MediumFont)
-    love.graphics.printf("For centuries your job", GAMEWIDTH * 0.05, GAMEHEIGHT * 0.6, GAMEWIDTH, "left")
-    love.graphics.printf("has been to wake up the humans", GAMEWIDTH * 0.05, GAMEHEIGHT * 0.65, GAMEWIDTH, "left")
-    love.graphics.printf("but your purpose is under threat", GAMEWIDTH * 0.05, GAMEHEIGHT * 0.7, GAMEWIDTH, "left")
-    love.graphics.printf("from a new tech", GAMEWIDTH * 0.05, GAMEHEIGHT * 0.75, GAMEWIDTH, "left")
-
-
+    -- local y = GAMEHEIGHT + 70
+    -- -- Set the scene and instructions for the player
+    -- love.graphics.setColor(themes.current.secondary)
+    -- love.graphics.setFont(LargeFont)
+    -- -- love.graphics.printf("Wake up the farmer before 6am or get the chop!", 0, y * 0.5, GAMEWIDTH, "center")
+    -- love.graphics.setFont(MediumFont)
+    -- love.graphics.printf("For centuries your job", GAMEWIDTH * 0.05, y * 0.6, GAMEWIDTH, "left")
+    -- love.graphics.printf("has been to wake up the humans", GAMEWIDTH * 0.05, y * 0.65, GAMEWIDTH, "left")
+    -- love.graphics.printf("but your purpose is under threat", GAMEWIDTH * 0.05, y * 0.7, GAMEWIDTH, "left")
+    -- love.graphics.printf("from a new tech", GAMEWIDTH * 0.05, y * 0.75, GAMEWIDTH, "left")
+    
+    
+    -- DRAW MOUSE CURSOR AS
+    local mouseX, mouseY = love.mouse.getPosition()
+    mouseX, mouseY = push:toGame(mouseX, mouseY)
+    --nil is returned if mouse is outside the game screen
+  
+    love.graphics.setColor(themes.current.secondary)
+    if mouseX and mouseY then love.graphics.circle("fill", mouseX, mouseY, 10) end
+  
+        love.graphics.setColor(themes.current.primary)
+    if mouseX and mouseY then love.graphics.circle("line", mouseX, mouseY, 10) end
+  
     
   end
 
